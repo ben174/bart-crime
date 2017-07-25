@@ -10,3 +10,4 @@ from django.views.decorators.csrf import csrf_exempt
 def report_webhook(request):
     #TODO: authenticate via secret
     report = Report.objects.create(body=request.body)
+    report.create_incidents()
