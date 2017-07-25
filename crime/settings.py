@@ -25,7 +25,7 @@ SECRET_KEY = '_0p#t+%5l+x@qnxrsm_763z4&)-kbeads(_!x3^^ebkjbb7jtb'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['bart-crime.herokuapp.com']
 
 
 # Application definition
