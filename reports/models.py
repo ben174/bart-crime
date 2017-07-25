@@ -5,7 +5,7 @@ from django.db import models
 
 
 class Report(models.Model):
-    report_dt = models.DateTimeField()
+    report_dt = models.DateTimeField(auto_now_add=True)
     body = models.TextField()
 
 
