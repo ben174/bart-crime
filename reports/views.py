@@ -7,4 +7,4 @@ from django.shortcuts import render
 
 def report_webhook(request):
     #TODO: authenticate via secret
-    report = Report.objects.create(body=request.text)
+    report = Report.objects.create(body=request.body)
