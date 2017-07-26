@@ -116,7 +116,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -133,3 +133,15 @@ STATICFILES_DIRS = (
 )
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+USE_ENV_FOR_SECRETS = True
+try:
+    import secrets
+    USE_ENV_FOR_SECRETS = False
+except ImportError:
+    pass
+
+def get_secret(secret):
+    if not USE_ENV_FOR_SECRETS:
+        return getattr(secrets, secret)
+    return os.environ[secret]
