@@ -46,7 +46,6 @@ class Report(models.Model):
                 report=self,
                 incident_dt=incident_dt,
             )
-            print 'Created incident: {}'.format(incident)
 
         self.processed = True
         self.save()
