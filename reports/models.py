@@ -96,7 +96,7 @@ class Incident(models.Model):
         if 'robbery' in lower_title:
             return 'bank'
         if 'exposure' in lower_title:
-            return 'eye'
+            return 'user-secret'
 
     def __unicode__(self):
         return self.title
