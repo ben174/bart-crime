@@ -57,10 +57,7 @@
 {% endfor %}
 </div>
 {% if prev_date %}
-<a href="/date/{{ prev_date|date:"Y-m-d" }}">{{ prev_date }}</a>
-{% endif %}
-{% if next_date %}
-<a href="/date/{{ next_date|date:"Y-m-d" }}">{{ next_date }}</a>
+<a class="btn btn-outline-primary" href="/date/{{ prev_date|date:"Y-m-d" }}">More</a>
 {% endif %}
 
 {% endblock %}
