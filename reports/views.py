@@ -34,23 +34,32 @@ def date(request, year, month, day):
     return listing(request, date)
 
 def listing(request, date):
-    next_date = date + datetime.timedelta(days=-1)
-    current_date = Incident.objects.filter(
-        incident_dt__isnull=False,
-        incident_dt__lte=next_date,
+    tomorrow = datetime.datetime.now() + datetime.timedelta(days=1)
+    curr_date = Incident.objects.filter(
+        incident_date__lte=date,
     ).latest('incident_dt').incident_date
-    prev_date = Incident.objects.filter(
-        incident_dt__isnull=False,
-        incident_dt__lt=current_date,
-    ).latest('incident_dt').incident_date
+    try:
+        next_date = Incident.objects.filter(
+            incident_date__gt=curr_date,
+            incident_date__lt=tomorrow,
+        ).earliest('incident_dt').incident_date
+    except Incident.DoesNotExist:
+        next_date = None
+    try:
+        prev_date = Incident.objects.filter(
+            incident_date__lt=curr_date,
+        ).latest('incident_dt').incident_date
+    except Incident.DoesNotExist:
+        prev_date = None
     incidents = Incident.objects.filter(
         incident_dt__isnull=False,
-        incident_date=current_date,
+        incident_date=curr_date,
     ).order_by('-incident_dt')
     return render(request, 'home.html', {
-        'current_date': current_date,
+        'curr_date': curr_date,
         'incidents': incidents,
-        'prev_date': prev_date
+        'prev_date': prev_date,
+        'next_date': next_date,
     })
 
 def incident(request, incident_id):
