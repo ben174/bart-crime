@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '_0p#t+%5l+x@qnxrsm_763z4&)-kbeads(_!x3^^ebkjbb7jtb'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['www.bartcrimes.com', 'bartcrimes.com', '127.0.0.1', 'bart-crime.herokuapp.com']
 
