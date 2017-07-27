@@ -135,6 +135,8 @@ STATICFILES_DIRS = (
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
+USE_ENV_FOR_SECRETS = True
+
 try:
     import secrets
     DEBUG = True

@@ -20,6 +20,8 @@ def report_webhook(request):
     return HttpResponse('incident created')
 
 def do_scrape(request):
+    if request.GET.get('trigger') != settings.get_secret('TRIGGER_KEY'):
+        return HttpResponse('go away')
     scraper.scrape()
     return HttpResponse('done scraping')
 
