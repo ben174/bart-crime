@@ -1,10 +1,9 @@
 import datetime
 
 import requests
-from bs4 import BeautifulSoup
 
 from crime import settings
-from reports.models import Report, Incident
+from reports.models import Report
 
 
 def scrape():
