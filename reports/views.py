@@ -6,6 +6,7 @@ from crime import settings
 from reports.models import Report, Incident, Comment
 from reports import scraper
 
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
 from django.views.decorators.csrf import csrf_exempt
@@ -13,14 +14,16 @@ from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt
 def report_webhook(request):
     if request.GET.get('trigger') != settings.get_secret('TRIGGER_KEY'):
-        return None
+        return HttpResponse('go away')
     report = Report.objects.create(body=request.body)
     report.create_incidents()
+    return HttpResponse('incident created')
 
 def do_scrape(request):
     if request.GET.get('trigger') != settings.get_secret('TRIGGER_KEY'):
-        return None
+        return HttpResponse('go away')
     scraper.scrape()
+    return HttpResponse('done scraping')
 
 def home(request):
     date = datetime.datetime.now()
