@@ -27,7 +27,7 @@ class Report(models.Model):
             location = None
             incident_dt = None
             body = incident_html.find(class_='rss_description').text
-            match = re.match(r'(\d+)\/(\d+)\/(\d+)[\s,]+(\d{2})(\d{2})\s[hH].*', body)
+            match = re.match(r'^(\d+)\/(\d+)\/(\d+)[\s,]+(\d{1,2}):?(\d{2})', body)
             if match:
                 month, day, year, hour, minute = [int(m) for m in match.groups()]
                 if year < 2000:
@@ -46,9 +46,13 @@ class Report(models.Model):
                 report=self,
                 incident_dt=incident_dt,
             )
+            print 'Created incident: {}'.format(incident)
 
         self.processed = True
         self.save()
+
+    def __unicode__(self):
+        return '{} - {} incident(s)'.format(self.report_dt, self.incident_set.all().count())
 
 
 class Station(models.Model):
