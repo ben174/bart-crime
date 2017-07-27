@@ -71,5 +71,22 @@ class Incident(models.Model):
     body = models.CharField(max_length=5000)
     arrested = models.BooleanField(default=False)
 
+    @property
+    def icon(self):
+        lower_title = self.title.lower()
+        if 'auto' in lower_title:
+            return 'car'
+        if 'bicycle' in lower_title or 'bike' in lower_title:
+            return 'bicycle'
+        if 'warrant' in lower_title:
+            return 'person'
+        if 'theft' in lower_title or 'robbery' in lower_title:
+            return 'money'
+        if 'person' in lower_title:
+            return 'person'
+        if 'violation' in lower_title or 'obstruct' in lower_title:
+            return 'ban'
+        if 'weapon' in lower_title:
+            return 'cutlery'
     def __unicode__(self):
         return self.title

@@ -23,13 +23,32 @@ def do_scrape(request):
     scraper.scrape()
 
 def home(request):
-    tomorrow = datetime.datetime.now() + datetime.timedelta(days=-1)
-    latest_date = Incident.objects.filter(
+    date = datetime.datetime.now()
+    return listing(request, date)
+
+def date(request, year, month, day):
+    date = datetime.date(int(year), int(month), int(day))
+    return listing(request, date)
+
+def listing(request, date):
+    next_date = date + datetime.timedelta(days=-1)
+    current_date = Incident.objects.filter(
         incident_dt__isnull=False,
-        incident_dt__lte=tomorrow
+        incident_dt__lte=next_date,
     ).latest('incident_dt').incident_date
-    incidents = Incident.objects.filter(incident_dt__isnull=False, incident_date=latest_date).order_by('-incident_dt')
-    return render(request, 'home.html', {'incidents': incidents})
+    prev_date = Incident.objects.filter(
+        incident_dt__isnull=False,
+        incident_dt__lt=current_date,
+    ).latest('incident_dt').incident_date
+    incidents = Incident.objects.filter(
+        incident_dt__isnull=False,
+        incident_date=current_date,
+    ).order_by('-incident_dt')
+    return render(request, 'home.html', {
+        'current_date': current_date,
+        'incidents': incidents,
+        'prev_date': prev_date
+    })
 
 def incident(request, incident_id):
     incident = get_object_or_404(Incident, pk=incident_id)

@@ -4,4 +4,7 @@ from reports.models import Station, Report, Incident
 
 from django.contrib import admin
 
-admin.site.register([Station, Report, Incident])
+class IncidentAdmin(admin.ModelAdmin):
+    list_display = ('title', 'incident_dt', 'body', 'icon')
+admin.site.register(Incident, IncidentAdmin)
+admin.site.register([Station, Report])
