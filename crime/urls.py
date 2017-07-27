@@ -21,6 +21,7 @@ from reports import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^report/', views.report_webhook),
+    url(r'^incident/(?P<incident_id>[0-9]+)/', views.incident),
     url(r'^scrape/', views.do_scrape),
     url(r'^$', views.home),
 ]

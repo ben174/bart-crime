@@ -1,14 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1 class="display-2">Bart Crimes</h1>
-{% for incident in incidents %}
 <h2>{{ incident.title }}</h2>
 {% if incident.incident_dt %}
 <h3>{{ incident.incident_dt }}</h3>
 {% endif %}
 <h4>{{ incident.location }}</h4>
 <p class="lead">{{ incident.body }}</p>
-<p><a href="/incident/{{ incident.id }}">permalink</a></p>
-<hr>
-{% endfor %}
 {% endblock %}
