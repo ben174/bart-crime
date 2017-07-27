@@ -36,8 +36,7 @@ class Report(models.Model):
                 body = '\r\n'.join(body.split('\r\n')[1:])
                 incident_dt = datetime.datetime(year, month, day, hour, minute)
                 incident_date = datetime.date(year, month, day)
-                pytz.timezone('America/Los_Angeles').localize(incident_dt)
-                pytz.timezone('America/Los_Angeles').localize(incident_date)
+                incident_dt = pytz.timezone('America/Los_Angeles').localize(incident_dt)
 
             if ' - ' in title:
                 title_split = title.split(' - ')
