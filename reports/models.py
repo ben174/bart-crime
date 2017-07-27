@@ -91,6 +91,11 @@ class Incident(models.Model):
             return 'ban'
         if 'weapon' in lower_title:
             return 'cutlery'
+        if 'robbery' in lower_title:
+            return 'bank'
+        if 'exposure' in lower_title:
+            return 'eye'
+
     def __unicode__(self):
         return self.title
 
