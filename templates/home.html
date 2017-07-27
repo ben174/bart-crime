@@ -5,11 +5,17 @@
 <h2 class="text-center">Crime reports for <b>{{ current_date }}</b></h2>
 
 
+<div class="alert alert-info" role="alert">
+    <strong>Welcome!</strong> This site is about <b>Making Public Informaion Public</b>. 
+    BART has been a little strange about sharing public information lately, this site is here
+    to make it easier to access that information. <a href="/about">Read more here.</a>
+</div>
+
 <div class="row">
 {% for incident in incidents %}
   <div class="col-sm-6">
-    <div class="card" style="background-color: #EEF; min-height: 300px; margin: 10px;">
-	  <h3 class="card-header" style="background-color: #DDF">
+    <div class="card" style="background-color: #f6fbfd; min-height: 300px; margin-bottom: 10px;">
+	  <h3 class="card-header" style="background-color: #c2deec">
 		<i class="fa fa-{{ incident.icon }}" aria-hidden="true"></i>
 		{{ incident.title }}
 	  </h3>
@@ -23,7 +29,7 @@
 		<p class="card-text">{{ incident.body }}</p>
 		<a href="/incident/{{ incident.id }}" class="card-link">permalink</a>
       </div>
-	  <div class="card-footer text-muted" style="background-color: #e4e4fd">
+	  <div class="card-footer text-muted" style="background-color: #e6f6ff">
 		{{ incident.incident_dt|naturaltime }}
 	  </div>
     </div>
