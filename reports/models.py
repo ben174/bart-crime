@@ -81,6 +81,8 @@ class Incident(models.Model):
             return 'car'
         if 'bicycle' in lower_title or 'bike' in lower_title:
             return 'bicycle'
+        if 'intoxication' in lower_title:
+            return 'glass'
         if 'warrant' in lower_title:
             return 'user'
         if 'theft' in lower_title or 'robbery' in lower_title:
