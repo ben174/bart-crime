@@ -1,27 +1,31 @@
 {% extends 'base.html' %}
+{% load humanize %}
 {% block content %}
-<h1 class="display-2">Bart Crimes</h1>
-<h2>{{ current_date }}</h2>
+<h1 class="display-2 text-center">Bart Crimes</h1>
+<h2 class="text-center">Crime reports for <b>{{ current_date }}</b></h2>
 
 
 <div class="row">
 {% for incident in incidents %}
   <div class="col-sm-6">
     <div class="card" style="background-color: #EEF; min-height: 300px; margin: 10px;">
+	  <h3 class="card-header" style="background-color: #DDF">
+		<i class="fa fa-{{ incident.icon }}" aria-hidden="true"></i>
+		{{ incident.title }}
+	  </h3>
       <div class="card-block">
-		<h4 class="card-title">
-		  <i class="fa fa-{{ incident.icon }}" aria-hidden="true"></i>
-		  {{ incident.title }}
-		</h4>
 		<h6 class="card-subtitle mb-2 text-muted">
 		  {% if incident.location %}
-		  {{ incident.location }} - 
+		  <b>{{ incident.location }}</b> - 
 		  {% endif %}
 		  {{ incident.incident_dt|date:"g:m A" }}
 		</h6>
 		<p class="card-text">{{ incident.body }}</p>
 		<a href="/incident/{{ incident.id }}" class="card-link">permalink</a>
       </div>
+	  <div class="card-footer text-muted" style="background-color: #e4e4fd">
+		{{ incident.incident_dt|naturaltime }}
+	  </div>
     </div>
   </div>
 {% endfor %}
