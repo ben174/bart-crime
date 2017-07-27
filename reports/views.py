@@ -26,6 +26,9 @@ def home(request):
     date = datetime.datetime.now()
     return listing(request, date)
 
+def about(request):
+    return render(request, 'about.html')
+
 def date(request, year, month, day):
     date = datetime.date(int(year), int(month), int(day))
     return listing(request, date)
