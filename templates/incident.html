@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1 class="display-2">Bart Crimes</h1>
-<h2>{{ incident.title }}</h2>
+<h2 class="display-2">Bart Crimes</h2>
+<h3>{{ incident.title }}</h3>
 {% if incident.incident_dt %}
-<h3>{{ incident.incident_dt }}</h3>
+<h4>{{ incident.incident_dt }}</h4>
 {% endif %}
-<h4>{{ incident.location }}</h4>
+<h5>{{ incident.location }}</h5>
 <p class="lead">{{ incident.body }}</p>
 {% endblock %}
