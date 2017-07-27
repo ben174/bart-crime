@@ -3,10 +3,10 @@ from __future__ import unicode_literals
 import datetime
 
 from crime import settings
-from reports.models import Report, Incident
+from reports.models import Report, Incident, Comment
 from reports import scraper
 
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 
 from django.views.decorators.csrf import csrf_exempt
 
@@ -64,4 +64,7 @@ def listing(request, date):
 
 def incident(request, incident_id):
     incident = get_object_or_404(Incident, pk=incident_id)
+    if request.method == 'POST':
+        Comment.objects.create(incident=incident, text=request.POST.get('comment'))
+        return redirect('incident', incident_id=incident_id)
     return render(request, 'incident.html', {'incident': incident})

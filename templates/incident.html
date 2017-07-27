@@ -7,4 +7,26 @@
 {% endif %}
 <h5>{{ incident.location }}</h5>
 <p class="lead">{{ incident.body }}</p>
+{% for comment in incident.comment_set.all %}
+
+<div class="card">
+  <div class="card-header">
+    Comment by Anonymous on {{ comment.created_dt }}
+  </div>
+  <div class="card-block">
+    <blockquote class="card-blockquote">
+      <p>{{ comment.text }}</p>
+    </blockquote>
+  </div>
+</div>
+{% endfor %}
+
+<form method="post">
+  {% csrf_token %}
+  <div class="form-group">
+    <label for="comment">Add a comment</label>
+    <textarea class="form-control" name="comment" id="comment" rows="3"></textarea>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
 {% endblock %}

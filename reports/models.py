@@ -3,8 +3,10 @@ from __future__ import unicode_literals
 import datetime
 import re
 
-from django.db import models
 from bs4 import BeautifulSoup
+from django.contrib.auth.models import User
+from django.db import models
+import pytz
 
 
 class Report(models.Model):
@@ -34,6 +36,8 @@ class Report(models.Model):
                 body = '\r\n'.join(body.split('\r\n')[1:])
                 incident_dt = datetime.datetime(year, month, day, hour, minute)
                 incident_date = datetime.date(year, month, day)
+                pytz.timezone('America/Los_Angeles').localize(incident_dt)
+                pytz.timezone('America/Los_Angeles').localize(incident_date)
 
             if ' - ' in title:
                 title_split = title.split(' - ')
@@ -90,3 +94,10 @@ class Incident(models.Model):
             return 'cutlery'
     def __unicode__(self):
         return self.title
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, null=True, blank=True)
+    created_dt = models.DateTimeField(auto_now_add=True)
+    incident = models.ForeignKey(Incident)
+    text = models.TextField()

@@ -111,13 +111,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Los_Angeles'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False
+USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -135,12 +135,14 @@ STATICFILES_DIRS = (
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
-USE_ENV_FOR_SECRETS = True
 try:
     import secrets
     DEBUG = True
     USE_ENV_FOR_SECRETS = False
+    SECURE_SSL_REDIRECT = False
 except ImportError:
+    # must be prod, do prod stuff here
+    SECURE_SSL_REDIRECT = True
     pass
 
 def get_secret(secret):

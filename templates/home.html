@@ -44,6 +44,7 @@
           {{ incident.incident_dt|date:"g:m A" }}
         </h6>
         <p class="card-text">{{ incident.body }}</p>
+        <a href="/incident/{{ incident.id }}" class="card-link">{% if incident.comment_set.all|length > 0 %}{{ incident.comment_set.all|length }} comment(s){% else %}add a comment{% endif %}</a>
         <a href="/incident/{{ incident.id }}" class="card-link">permalink</a>
       </div>
       <div class="card-footer text-muted" style="background-color: #e6f6ff">
