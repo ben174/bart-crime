@@ -82,7 +82,7 @@ class Incident(models.Model):
         if 'bicycle' in lower_title or 'bike' in lower_title:
             return 'bicycle'
         if 'warrant' in lower_title:
-            return 'person'
+            return 'user'
         if 'theft' in lower_title or 'robbery' in lower_title:
             return 'money'
         if 'person' in lower_title:
