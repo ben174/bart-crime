@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import datetime
 
 from crime import settings
 from reports.models import Report, Incident
@@ -22,5 +23,10 @@ def do_scrape(request):
     scraper.scrape()
 
 def home(request):
-    incidents = Incident.objects.filter(incident_dt__isnull=False).order_by('-incident_dt')
+    tomorrow = datetime.datetime.now() + datetime.timedelta(days=-1)
+    latest_date = Incident.objects.filter(
+        incident_dt__isnull=False,
+        incident_dt__lte=tomorrow
+    ).latest('incident_dt').incident_date
+    incidents = Incident.objects.filter(incident_dt__isnull=False, incident_date=latest_date).order_by('-incident_dt')
     return render(request, 'home.html', {'incidents': incidents})

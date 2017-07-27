@@ -24,8 +24,7 @@ class Report(models.Model):
 
         for incident_html in soup.find_all('div', class_='rss_item'):
             title = incident_html.find(class_='rss_title').a.text.replace('–', '-')
-            location = None
-            incident_dt = None
+            location, incident_dt, incident_date = None, None, None
             body = incident_html.find(class_='rss_description').text
             match = re.match(r'^(\d+)\/(\d+)\/(\d+)[\s,]+(\d{1,2}):?(\d{2})', body)
             if match:
@@ -34,6 +33,7 @@ class Report(models.Model):
                     year += 2000
                 body = '\r\n'.join(body.split('\r\n')[1:])
                 incident_dt = datetime.datetime(year, month, day, hour, minute)
+                incident_date = datetime.date(year, month, day)
 
             if ' - ' in title:
                 title_split = title.split(' - ')
@@ -45,6 +45,7 @@ class Report(models.Model):
                 location=location,
                 report=self,
                 incident_dt=incident_dt,
+                incident_date=incident_date,
             )
             print 'Created incident: {}'.format(incident)
 
@@ -61,12 +62,14 @@ class Station(models.Model):
 
 class Incident(models.Model):
     incident_dt = models.DateTimeField(null=True, blank=True)
+    incident_date = models.DateField(null=True, blank=True)
     report = models.ForeignKey(Report)
     station = models.ForeignKey(Station, null=True, blank=True)
     location = models.CharField(max_length=255, null=True, blank=True)
     case = models.CharField(max_length=50, null=True, blank=True)
     title = models.CharField(max_length=255)
     body = models.CharField(max_length=5000)
+    arrested = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.title
