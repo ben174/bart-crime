@@ -84,11 +84,11 @@ class Incident(models.Model):
         if 'intoxication' in lower_title:
             return 'glass'
         if 'warrant' in lower_title:
-            return 'user'
+            return 'user-secret'
         if 'theft' in lower_title or 'robbery' in lower_title:
             return 'money'
         if 'person' in lower_title:
-            return 'person'
+            return 'user-secret'
         if 'violation' in lower_title or 'obstruct' in lower_title:
             return 'ban'
         if 'weapon' in lower_title:
