@@ -43,7 +43,7 @@
           {% if incident.location %}
           <b>{{ incident.location }}</b> - 
           {% endif %}
-          {{ incident.incident_dt|date:"g:m A" }}
+          {{ incident.incident_dt|date:"g:i A" }}
         </h6>
         <p class="card-text">{{ incident.body }}</p>
         <a href="/incident/{{ incident.id }}" class="card-link">{% if incident.comment_set.all|length > 0 %}{{ incident.comment_set.all|length }} comment(s){% else %}add a comment{% endif %}</a>
