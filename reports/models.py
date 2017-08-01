@@ -7,6 +7,10 @@ from bs4 import BeautifulSoup
 from django.contrib.auth.models import User
 from django.db import models
 import pytz
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+from reports.tweet import Twitter
 
 
 class Report(models.Model):
@@ -51,6 +55,8 @@ class Report(models.Model):
                 incident_date=incident_date,
             )
             print 'Created incident: {}'.format(incident)
+            incident.tweet()
+            print 'Tweeted it!'
 
         self.processed = True
         self.save()
@@ -73,6 +79,20 @@ class Incident(models.Model):
     title = models.CharField(max_length=255)
     body = models.CharField(max_length=5000)
     arrested = models.BooleanField(default=False)
+    tweeted = models.BooleanField(default=False)
+
+    twitter = None
+
+    def get_url(self):
+        return '{}/incident/{}'.format('https://www.bartcrimes.com', self.pk)
+
+    def tweet(self):
+        if not Incident.twitter:
+            Incident.twitter = Twitter()
+            Incident.twitter.connect()
+        Incident.twitter.post_incident(self)
+        self.tweeted = True
+        self.save()
 
     @property
     def icon(self):
@@ -100,6 +120,11 @@ class Incident(models.Model):
 
     def __unicode__(self):
         return self.title
+
+
+@receiver(post_save, sender=Incident)
+def tweet_incident(sender, instance, **kwargs):
+    instance.tweet()
 
 
 class Comment(models.Model):
