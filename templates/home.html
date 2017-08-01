@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
-{% load humanize %}
 {% block content %}
-<h1 class="display-3 text-center">Bart Crimes</h1>
 <div class="row">
   <div class="col">
   </div>
   <div class="col-6">
-	 <h2 class="text-center">Reports for <b>{{ curr_date }}</b></h2>
+	 <h2 class="text-center">Crime Reports for </h2>
+    <h3 class="display-4 text-center"><b>{{ curr_date }}</b></h3>
   </div>
   <div class="col">
   <nav aria-label="Page navigation example">
@@ -32,28 +31,7 @@
 
 <div class="row">
 {% for incident in incidents %}
-  <div class="col-sm-6">
-    <div class="card" style="background-color: #f6fbfd; min-height: 300px; margin-bottom: 10px;">
-      <h3 class="card-header" style="background-color: #c2deec">
-        <i class="fa fa-{{ incident.icon }}" aria-hidden="true"></i>
-        {{ incident.title }}
-      </h3>
-      <div class="card-block">
-        <h6 class="card-subtitle mb-2 text-muted">
-          {% if incident.location %}
-          <b>{{ incident.location }}</b> - 
-          {% endif %}
-          {{ incident.incident_dt|date:"g:i A" }}
-        </h6>
-        <p class="card-text">{{ incident.body }}</p>
-        <a href="/incident/{{ incident.id }}" class="card-link">{% if incident.comment_set.all|length > 0 %}{{ incident.comment_set.all|length }} comment(s){% else %}add a comment{% endif %}</a>
-        <a href="/incident/{{ incident.id }}" class="card-link">permalink</a>
-      </div>
-      <div class="card-footer text-muted" style="background-color: #e6f6ff">
-        {{ incident.incident_dt|naturaltime }}
-      </div>
-    </div>
-  </div>
+  {% include "incident_block.html" %}
 {% endfor %}
 </div>
 {% if prev_date %}
