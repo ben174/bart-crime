@@ -55,8 +55,10 @@ class Report(models.Model):
                 incident_date=incident_date,
             )
             print 'Created incident: {}'.format(incident)
-            incident.tweet()
-            print 'Tweeted it!'
+            try:
+                incident.tweet()
+            except Exception as e:
+                print 'Whoops an exception while tweeting: {}'.format(str(e))
 
         self.processed = True
         self.save()
