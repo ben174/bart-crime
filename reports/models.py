@@ -121,7 +121,11 @@ class Incident(models.Model):
 
 @receiver(post_save, sender=Incident)
 def tweet_incident(sender, instance, **kwargs):
-    instance.tweet()
+    try:
+        instance.tweet()
+    except Exception as e:
+        print 'Exception while tweeting incident: {}'.format(str(e))
+
 
 
 class Comment(models.Model):
