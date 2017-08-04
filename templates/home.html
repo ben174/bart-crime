@@ -28,14 +28,29 @@
     <p><i class="fa fa-twitter" aria-hidden="true"></i>
     Follow <a href="https://twitter.com/bart_crimes">@bart_crimes</a> on Twitter to receive each incident in your feed.</p>
 </div>
+<script>
+$(window).scroll(function() {
+	if (checkVisible($('#morelink')[0])) {
 
-<div class="row">
-{% for incident in incidents %}
-  {% include "incident_block.html" %}
-{% endfor %}
+    }
+
+});
+
+function checkVisible(elm) {
+  var rect = elm.getBoundingClientRect();
+  var viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
+  return !(rect.bottom < 0 || rect.top - viewHeight >= 0);
+}
+
+    
+</script>
+
+<div id="mainshit">
+{% include "day.html" %}
+</div>
 </div>
 {% if prev_date %}
-<a class="btn btn-outline-primary" href="/date/{{ prev_date|date:"Y-m-d" }}">More</a>
+<a class="btn btn-outline-primary" href="/date/{{ prev_date|date:"Y-m-d" }}" id="morelink">More</a>
 {% endif %}
 
 {% endblock %}
