@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 import datetime
 import re
+import difflib
 
 from bs4 import BeautifulSoup
 from django.contrib.auth.models import User
@@ -27,6 +28,7 @@ class Report(models.Model):
 
     def create_incidents(self):
         soup = BeautifulSoup(self.fixed_body, 'html.parser')
+        other_soup = BeautifulSoup(self.fixed_body, 'html.parser')
 
         for incident_html in soup.find_all('div', class_='rss_item'):
             title = incident_html.find(class_='rss_title').a.text.replace('–', '-')
@@ -44,6 +46,7 @@ class Report(models.Model):
 
             if ' - ' in title:
                 title_split = title.split(' - ')
+                title_split = title.split('')
                 title = title_split[0]
                 location = title_split[1]
             incident = Incident.objects.create(
@@ -64,6 +67,9 @@ class Report(models.Model):
 
 class Station(models.Model):
     name = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.name
 
 
 class Incident(models.Model):
@@ -90,6 +96,20 @@ class Incident(models.Model):
         Incident.twitter.post_incident(self)
         self.tweeted = True
         self.save()
+
+    @property
+    def tweet_text(self):
+        return ''
+
+    @property
+    def station_best_guess(self):
+        if not self.location:
+            return None
+	station_names = list(Station.objects.all().values_list('name', flat=True))
+        answer = difflib.get_close_matches(self.location.replace(' Station', ''), station_names)
+        if answer:
+            return answer[0]
+        return None
 
     @property
     def icon(self):
