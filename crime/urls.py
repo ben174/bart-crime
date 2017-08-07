@@ -34,5 +34,5 @@ urlpatterns = [
     url(r'^date/(?P<year>[0-9]{4})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2})/', views.date),
     url(r'^scrape/', views.do_scrape),
     url(r'^$', views.home),
-    url(r'^api/', include(router.urls)),
+    url(r'^api/v0/', include(router.urls)),
 ]
