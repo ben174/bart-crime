@@ -46,7 +46,6 @@ class Report(models.Model):
 
             if ' - ' in title:
                 title_split = title.split(' - ')
-                title_split = title.split('')
                 title = title_split[0]
                 location = title_split[1]
             incident = Incident.objects.create(
