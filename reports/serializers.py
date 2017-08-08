@@ -10,6 +10,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 class StationSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.ReadOnlyField()
+    info_url = serializers.ReadOnlyField()
+    incidents = serializers.ReadOnlyField(source='incidents_info')
 
     class Meta:
         model = Station

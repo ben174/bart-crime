@@ -103,3 +103,4 @@ ENV/
 crime/secrets.py
 venv
 db.sqlite3
+data/

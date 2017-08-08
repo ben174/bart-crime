@@ -119,7 +119,7 @@ class StationViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows stations to be viewed
     """
-    queryset = Station.objects.all().order_by('-name')
+    queryset = Station.objects.all().order_by('-abbreviation')
     serializer_class = StationSerializer
 
 class ReportViewSet(viewsets.ReadOnlyModelViewSet):

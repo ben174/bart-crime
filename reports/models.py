@@ -26,6 +26,10 @@ class Report(models.Model):
         # their class names are all preceeded with some random garbage, clean that up
         return re.sub(r'(<div class=")(.*)(rss_)(.+?")', r'\1\3\4', self.body)
 
+    @property
+    def incidents_count(self):
+        return self.incidents.all().count()
+
     def create_incidents(self):
         soup = BeautifulSoup(self.fixed_body, 'html.parser')
         other_soup = BeautifulSoup(self.fixed_body, 'html.parser')
@@ -61,7 +65,8 @@ class Report(models.Model):
         self.save()
 
     def __unicode__(self):
-        return '{} - {} incident(s)'.format(self.report_dt, self.incident_set.all().count())
+        return '{} - {} incident(s)'.format(self.report_dt,
+                                            self.incidents_count)
 
 
 class Station(models.Model):
@@ -75,17 +80,25 @@ class Station(models.Model):
     state = models.CharField(max_length=100)
     zipcode = models.IntegerField()
 
-    list_display = ('name', 'abbreviation', 'city')
-
     def __unicode__(self):
         return "{} ({})".format(self.name, self.abbreviation)
+
+    @property
+    def info_url(self):
+        return "http://www.bart.gov/stations/{}".format(self.abbreviation)
+
+    @property
+    def incidents_info(self):
+        return {
+            'total': self.incidents.all().count()
+        }
 
 
 class Incident(models.Model):
     incident_dt = models.DateTimeField(null=True, blank=True)
     incident_date = models.DateField(null=True, blank=True)
     report = models.ForeignKey(Report, related_name='incidents')
-    station = models.ForeignKey(Station, null=True, blank=True)
+    station = models.ForeignKey(Station, null=True, blank=True, related_name='incidents')
     location = models.CharField(max_length=255, null=True, blank=True)
     case = models.CharField(max_length=50, null=True, blank=True)
     title = models.CharField(max_length=255)
@@ -155,7 +168,7 @@ def fill_station(sender, instance, **kwargs):
     if guessed_station is not None:
         instance.station = guessed_station
 
-@receiver(post_save, sender=Incident)
+# @receiver(post_save, sender=Incident)
 def tweet_incident(sender, instance, **kwargs):
     try:
         instance.tweet()
