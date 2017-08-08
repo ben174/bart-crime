@@ -6,6 +6,8 @@ import datetime
 import re
 import difflib
 import pytz
+from django.utils import timezone
+import time
 
 from bs4 import BeautifulSoup
 
@@ -13,7 +15,18 @@ from django.core.management.base import BaseCommand, CommandError
 from reports.models import Incident, Report
 
 body_regex = r'^(\d+)\/(\d+)\/(\d+)[\s,]+(\d{1,2}):?(\d{2})'
-TZ = 'America/Los_Angeles'
+TZ = pytz.timezone('America/Los_Angeles')
+
+
+def parse_time(input_time):
+    parsed = None
+    try:
+        parsed = timezone.make_aware(timezone.datetime(*input_time[:-3]),
+                                     TZ)
+    except (pytz.NonExistentTimeError, pytz.AmbiguousTimeError):
+        added_hour = (timezone.datetime(*input_time[:-3]) + datetime.timedelta(hours=1))
+        parsed = timezone.make_aware(added_hour, TZ)
+    return parsed
 
 
 class Command(BaseCommand):
@@ -31,6 +44,9 @@ class Command(BaseCommand):
                 soup = BeautifulSoup(entry['content'][0]['value'],
                                      'html.parser')
                 allPTags = soup.findAll('p')
+                tags = set()
+                for tag in entry['tags']:
+                    tags.add(tag['term'])
                 body = None
                 if len(allPTags) == 1:
                     body = allPTags[0].text
@@ -51,11 +67,13 @@ class Command(BaseCommand):
                             incident_dt = datetime.datetime(year, month, day,
                                                             hour, minute)
                             incident_date = datetime.date(year, month, day)
-                            incident_dt = pytz.timezone(TZ).localize(incident_dt)
+                            incident_dt = TZ.localize(incident_dt)
                         except:
                             print 'Error when parsing time'
                             print body
                             print month, day, year, hour, minute
+                            incident_dt = parse_time(entry['published_parsed'])
+                            incident_date = incident_dt.date()
 
                     if ' - ' in title:
                         title_split = title.split(' - ')
@@ -64,11 +82,13 @@ class Command(BaseCommand):
                     incident = Incident.objects.create(
                         title=title,
                         body=body,
-                        report=Report.objects.get(pk=74),
                         location=location,
                         incident_dt=incident_dt,
                         incident_date=incident_date,
+                        published_at=parse_time(entry['published_parsed']),
+                        updated_at=parse_time(entry['updated_parsed'])
                     )
+                    incident.tags.set(*tags)
                     total_inserts += 1
         print "Total inserted entries {}".format(total_inserts)
         print "Total rejected entries {}".format(total_rejects)

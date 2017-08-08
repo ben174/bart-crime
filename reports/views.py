@@ -108,6 +108,10 @@ def incident(request, incident_id):
         return redirect('incident', incident_id=incident_id)
     return render(request, 'incident.html', {'incident': incident})
 
+def station(request, station_id):
+    station = get_object_or_404(Station, abbreviation=station_id)
+    return render(request, 'station.html', {'station': station})
+
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.

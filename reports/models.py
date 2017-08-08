@@ -10,6 +10,7 @@ from django.db import models
 import pytz
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
+from taggit.managers import TaggableManager
 
 from reports.tweet import Twitter
 
@@ -97,14 +98,20 @@ class Station(models.Model):
 class Incident(models.Model):
     incident_dt = models.DateTimeField(null=True, blank=True)
     incident_date = models.DateField(null=True, blank=True)
-    report = models.ForeignKey(Report, related_name='incidents')
-    station = models.ForeignKey(Station, null=True, blank=True, related_name='incidents')
+    report = models.ForeignKey(Report, null=True, blank=True,
+                               related_name='incidents')
+    station = models.ForeignKey(Station, null=True, blank=True,
+                                related_name='incidents')
     location = models.CharField(max_length=255, null=True, blank=True)
     case = models.CharField(max_length=50, null=True, blank=True)
     title = models.CharField(max_length=255)
     body = models.CharField(max_length=5000)
     arrested = models.BooleanField(default=False)
     tweeted = models.BooleanField(default=False)
+    published_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(null=True, blank=True)
+
+    tags = TaggableManager()
 
     twitter = None
 
@@ -158,6 +165,10 @@ class Incident(models.Model):
             return 'bank'
         if 'exposure' in lower_title:
             return 'user-secret'
+        if 'agency' in lower_title or 'assist' in lower_title:
+            return 'shield'
+        if 'narcotics' in lower_title:
+            return 'medkit'
 
     def __unicode__(self):
         return self.title
