@@ -18,7 +18,7 @@
   <i class="fa fa-{{ incident.prohibition_order|yesno:'check,times' }}" aria-hidden="true"></i> Prohibition order<br />
   <i class="fa fa-{{ incident.warrant|yesno:'check,times' }}" aria-hidden="true"></i> Warrant related<br />
 </div>
-Tags: {% for tag in incident.tags.all %}{{ tag.name }}{% include "comma.html" %}{% endfor %}
+{% for tag in incident.tags.all %}<span class="badge badge-pill badge-default">{{ tag.name }}</span>{% endfor %}
 {% for comment in incident.comment_set.all %}
 
 <div class="card">
