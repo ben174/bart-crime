@@ -25,7 +25,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', '_0p#t+%5l+x@qnxrsm_763z4&)-kbeads(_!x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['www.bartcrimes.com', 'bartcrimes.com', '127.0.0.1', 'bart-crime.herokuapp.com']
+ALLOWED_HOSTS = ['www.bartcrimes.com', 'bartcrimes.com', '127.0.0.1', 'bart-crime.herokuapp.com', 'bartcrimes.ngrok.io']
 
 
 # Application definition
