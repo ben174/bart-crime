@@ -1,19 +1,20 @@
 # -*- coding: utf-8 -*-
+"""Import Atom feeds with BPD log data."""
 from __future__ import unicode_literals
 from six.moves.html_parser import HTMLParser
+import argparse
 import os
 import feedparser
 import datetime
 import re
-import difflib
 import pytz
 from django.utils import timezone
-import time
 
 from bs4 import BeautifulSoup
 
-from django.core.management.base import BaseCommand, CommandError
-from reports.models import Incident, Report
+from django.core.management.base import BaseCommand
+from reports.models import Incident
+from crime import settings
 
 time_regex = r'^(\d+)\/(\d+)\/(\d+)[\s,]+(\d{1,2}):?(\d{2})(?:\s[Hh]ours).?'
 case_id_regex = r'(\d{4}-\d{4})(?:\W+)?([SL]\d{0,2})?'
@@ -22,6 +23,7 @@ TZ = pytz.timezone('America/Los_Angeles')
 
 
 def parse_time(input_time):
+    """Parse an Atom time stamp."""
     parsed = None
     try:
         parsed = timezone.make_aware(timezone.datetime(*input_time[:-3]),
@@ -34,24 +36,45 @@ def parse_time(input_time):
 
 
 class Command(BaseCommand):
-    help = 'Import historical data from downloaded Atom XML'
+    """The Django command."""
+
+    help = 'Import historical data from Atom XML'
+
+    def add_arguments(self, parser):
+        """Add optional command arguments."""
+        def str2bool(v):
+            if v.lower() in ('yes', 'true', 't', 'y', '1'):
+                return True
+            elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+                return False
+            else:
+                raise argparse.ArgumentTypeError('Boolean value expected.')
+
+        parser.add_argument('--local', type=str2bool, nargs='?',
+                            const=True, default='no',
+                            help='Import from local data.', dest='local')
 
     def handle(self, *args, **options):
+        """Handle the command."""
         h = HTMLParser()
 
         def iter_entries(feed):
+            """Import the given feedparser feed."""
             total_rejects = 0
             total_inserts = 0
             for entry in feed['entries']:
                 bpd_id = re.search(bpd_id_regex, entry['id']).group(0)
                 if Incident.objects.filter(bpd_id=bpd_id).exists():
-                    print 'Skipping log: {}'.format(bpd_id)
+                    print 'Skipping import of log: {}'.format(bpd_id)
                     continue
-                # print entry
-                title = entry['title'].replace('–', '-')
-                location, incident_dt, incident_date, case_id, location_id, body = None, None, None, None, None, None
-                parsed_time, parsed_case = False, False
+                else:
+                    print 'Attempting import of log: {}'.format(bpd_id)
+                raw_title = entry['title']
                 raw_body = entry['content'][0]['value']
+                title = raw_title.replace('–', '-')
+                location, incident_dt, incident_date = None, None, None
+                case_id, location_id, body = None, None, None
+                parsed_time, parsed_case = False, False
                 soup = BeautifulSoup(raw_body, 'html.parser')
                 allPTags = soup.findAll('p')
 
@@ -115,17 +138,17 @@ class Command(BaseCommand):
                     arrest_check = ('arrest' in raw_body.lower() or
                                     'booked' in raw_body.lower() or
                                     'detain' in raw_body.lower() or
-                                    'arrest' in entry['title'].lower() or
-                                    'booked' in entry['title'].lower() or
-                                    'detain' in entry['title'].lower())
+                                    'arrest' in raw_title.lower() or
+                                    'booked' in raw_title.lower() or
+                                    'detain' in raw_title.lower())
 
                     prohibition_check = ('prohibition' in raw_body.lower() or
-                                         'prohibition' in entry['title'].lower() or
+                                         'prohibition' in raw_title.lower() or
                                          'stay away' in raw_body.lower() or
-                                         'stay away' in entry['title'].lower())
+                                         'stay away' in raw_title.lower())
 
                     warrant = ('warrant' in raw_body.lower() or
-                               'warrant' in entry['title'].lower())
+                               'warrant' in raw_title.lower())
 
                     cleaned_body = re.sub(time_regex, '', body)
                     cleaned_body = re.sub(case_id_regex, '', cleaned_body)
@@ -153,12 +176,15 @@ class Command(BaseCommand):
 
         results = None
 
-        for fn in os.listdir('data/'):
-            feed = feedparser.parse("data/{}".format(fn))
+        if options['local']:
+            print 'Importing local data'
+            for fn in os.listdir('data/'):
+                feed = feedparser.parse('data/{}'.format(fn))
+                results = iter_entries(feed)
+        else:
+            print 'Importing from remote data'
+            feed = feedparser.parse(settings.get_secret('BPDLOG_ATOM'))
             results = iter_entries(feed)
 
-        # feed = feedparser.parse("https://bpd.bart.gov/?feed=atom")
-        # results = iter_entries(feed)
-
-        print "Total inserted entries {}".format(results[1])
-        print "Total rejected entries {}".format(results[0])
+        print 'Total inserted entries {}'.format(results[1])
+        print 'Total rejected entries {}'.format(results[0])
