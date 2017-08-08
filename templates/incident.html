@@ -4,8 +4,21 @@
 {% if incident.incident_dt %}
 <h4>{{ incident.incident_dt }}</h4>
 {% endif %}
+{% if incident.station %}
+<h5><a href="/station/{{ incident.station.abbreviation }}">{{ incident.station.name }}</a></h5>
+{% elif incident.location %}
 <h5>{{ incident.location }}</h5>
+{% endif %}
+{% if incident.case %}
+<h6>Case: {{ incident.case }}</h6>
+{% endif %}
 <p class="lead">{{ incident.body }}</p>
+<div class="col-xs-6">
+  <i class="fa fa-{{ incident.arrested|yesno:'check,times' }}" aria-hidden="true"></i> Arrest<br />
+  <i class="fa fa-{{ incident.prohibition_order|yesno:'check,times' }}" aria-hidden="true"></i> Prohibition order<br />
+  <i class="fa fa-{{ incident.warrant|yesno:'check,times' }}" aria-hidden="true"></i> Warrant related<br />
+</div>
+Tags: {% for tag in incident.tags.all %}{{ tag.name }}{% include "comma.html" %}{% endfor %}
 {% for comment in incident.comment_set.all %}
 
 <div class="card">
