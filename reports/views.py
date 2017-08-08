@@ -3,11 +3,11 @@ from __future__ import unicode_literals
 import datetime
 
 from crime import settings
-from reports.models import Report, Incident, Comment
+from reports.models import Report, Incident, Comment, Station
 from reports import scraper
 
 from rest_framework import viewsets
-from reports.serializers import UserSerializer, ReportSerializer, IncidentSerializer, CommentSerializer
+from reports.serializers import UserSerializer, StationSerializer, ReportSerializer, IncidentSerializer, CommentSerializer
 
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -81,6 +81,13 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
+
+class StationViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint that allows stations to be viewed
+    """
+    queryset = Station.objects.all().order_by('-name')
+    serializer_class = StationSerializer
 
 class ReportViewSet(viewsets.ReadOnlyModelViewSet):
     """

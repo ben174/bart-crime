@@ -22,6 +22,7 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
+router.register(r'stations', views.StationViewSet)
 router.register(r'reports', views.ReportViewSet)
 router.register(r'incidents', views.IncidentViewSet)
 router.register(r'comments', views.CommentViewSet)
