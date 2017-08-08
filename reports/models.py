@@ -66,9 +66,19 @@ class Report(models.Model):
 
 class Station(models.Model):
     name = models.CharField(max_length=100)
+    abbreviation = models.CharField(max_length=5)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    address = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
+    county = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    zipcode = models.IntegerField()
+
+    list_display = ('name', 'abbreviation', 'city')
 
     def __unicode__(self):
-        return self.name
+        return "{} ({})".format(self.name, self.abbreviation)
 
 
 class Incident(models.Model):
