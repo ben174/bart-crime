@@ -74,7 +74,7 @@ class Station(models.Model):
 class Incident(models.Model):
     incident_dt = models.DateTimeField(null=True, blank=True)
     incident_date = models.DateField(null=True, blank=True)
-    report = models.ForeignKey(Report)
+    report = models.ForeignKey(Report, related_name='incidents')
     station = models.ForeignKey(Station, null=True, blank=True)
     location = models.CharField(max_length=255, null=True, blank=True)
     case = models.CharField(max_length=50, null=True, blank=True)
