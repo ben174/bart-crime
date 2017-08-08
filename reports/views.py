@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import datetime
+import hashlib
+import hmac
 
 from crime import settings
 from reports.models import Report, Incident, Comment
@@ -9,7 +11,20 @@ from reports import scraper
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
+from django.utils.crypto import constant_time_compare
+
 from django.views.decorators.csrf import csrf_exempt
+
+
+def verify_mailgun_webhook(api_key, request):
+    token = request.POST['token']
+    timestamp = request.POST['timestamp']
+    signature = str(request.POST['signature'])
+    hmac_digest = hmac.new(key=api_key.encode('ascii'),
+                           msg='{}{}'.format(timestamp, token).encode('ascii'),
+                           digestmod=hashlib.sha256).hexdigest()
+    return constant_time_compare(signature, hmac_digest)
+
 
 @csrf_exempt
 def report_webhook(request):
@@ -23,6 +38,23 @@ def do_scrape(request):
     if request.GET.get('trigger') != settings.get_secret('TRIGGER_KEY'):
         return HttpResponse('go away')
     scraper.scrape()
+    return HttpResponse('done scraping')
+
+@csrf_exempt
+def handle_mailgun_webhook(request):
+    if verify_mailgun_webhook(settings.get_secret('MAILGUN_KEY'),
+                              request) is False:
+        return HttpResponse('go away')
+
+    if Report.objects.filter(email_id=request.POST.get('Message-Id')).exists():
+        return HttpResponse('Already processed')
+
+    report = Report.objects.create(
+        report_dt=scraper.parse_mail_date(request.POST.get('Date')),
+        email_id=request.POST.get('Message-Id'),
+        body=request.POST.get('body-html'),
+    )
+    report.create_incidents()
     return HttpResponse('done scraping')
 
 def home(request):
