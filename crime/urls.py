@@ -25,5 +25,6 @@ urlpatterns = [
     url(r'^incident/(?P<incident_id>[0-9]+)/', views.incident, name='incident'),
     url(r'^date/(?P<year>[0-9]{4})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2})/', views.date),
     url(r'^scrape/', views.do_scrape),
+    url(r'^mailgun/', views.handle_mailgun_webhook),
     url(r'^$', views.home),
 ]
