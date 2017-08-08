@@ -8,8 +8,8 @@ from django.db import models
 from django.core import urlresolvers
 
 class IncidentAdmin(admin.ModelAdmin):
-    list_display = ('case', 'title', 'incident_dt', 'location', 'station',
-                    'location_id', 'body', 'icon', 'published_at',
+    list_display = ('case', 'bpd_id', 'title', 'incident_dt', 'location',
+                    'station', 'location_id', 'body', 'icon', 'published_at',
                     'updated_at', 'arrested', 'prohibition_order', 'warrant',
                     'parsed_time', 'parsed_case')
     formfield_overrides = {

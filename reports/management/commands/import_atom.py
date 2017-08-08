@@ -15,8 +15,9 @@ from bs4 import BeautifulSoup
 from django.core.management.base import BaseCommand, CommandError
 from reports.models import Incident, Report
 
-time_regex = r'^(\d+)\/(\d+)\/(\d+)[\s,]+(\d{1,2}):?(\d{2})'
-case_id_regex = r'(\d{4}-\d{4})\W+(L\d{0,2})'
+time_regex = r'^(\d+)\/(\d+)\/(\d+)[\s,]+(\d{1,2}):?(\d{2})(?:\s[Hh]ours).?'
+case_id_regex = r'(\d{4}-\d{4})(?:\W+)?([SL]\d{0,2})?'
+bpd_id_regex = r'\d+'
 TZ = pytz.timezone('America/Los_Angeles')
 
 
@@ -24,24 +25,28 @@ def parse_time(input_time):
     parsed = None
     try:
         parsed = timezone.make_aware(timezone.datetime(*input_time[:-3]),
-                                     TZ)
+                                     timezone.utc)
     except (pytz.NonExistentTimeError, pytz.AmbiguousTimeError):
         added_hour = (timezone.datetime(*input_time[:-3]) +
                       datetime.timedelta(hours=1))
-        parsed = timezone.make_aware(added_hour, TZ)
-    return parsed
+        parsed = timezone.make_aware(added_hour, timezone.utc)
+    return parsed.astimezone(TZ)
 
 
 class Command(BaseCommand):
     help = 'Import historical data from downloaded Atom XML'
 
     def handle(self, *args, **options):
-        total_rejects = 0
-        total_inserts = 0
         h = HTMLParser()
-        for fn in os.listdir('data/'):
-            d = feedparser.parse("data/{}".format(fn))
-            for entry in d['entries']:
+
+        def iter_entries(feed):
+            total_rejects = 0
+            total_inserts = 0
+            for entry in feed['entries']:
+                bpd_id = re.search(bpd_id_regex, entry['id']).group(0)
+                if Incident.objects.filter(bpd_id=bpd_id).exists():
+                    print 'Skipping log: {}'.format(bpd_id)
+                    continue
                 # print entry
                 title = entry['title'].replace('–', '-')
                 location, incident_dt, incident_date, case_id, location_id, body = None, None, None, None, None, None
@@ -59,6 +64,7 @@ class Command(BaseCommand):
                     case_id = case_id_matches.group(1)
                     location_id = case_id_matches.group(2)
                     parsed_case = True
+
                 if len(allPTags) == 1:
                     body = allPTags[0].text
                 elif len(allPTags) == 2:
@@ -88,13 +94,21 @@ class Command(BaseCommand):
                             parsed_time = True
                         except:
                             print 'Error when parsing time'
-                            print body
                             print month, day, year, hour, minute
                             incident_dt = parse_time(entry['published_parsed'])
                             incident_date = incident_dt.date()
 
+                    if title.isupper():
+                        title = title.title()
+
                     if ' - ' in title:
                         title_split = title.split(' - ')
+                        title = title_split[0]
+                        location = h.unescape(title_split[1])
+                    elif ' at ' in title.lower():
+                        title_split = title.split(' at ')
+                        if len(title_split) == 1:
+                            title_split = title.split(' At ')
                         title = title_split[0]
                         location = h.unescape(title_split[1])
 
@@ -131,8 +145,20 @@ class Command(BaseCommand):
                         location_id=location_id,
                         parsed_time=parsed_time,
                         parsed_case=parsed_case,
+                        bpd_id=bpd_id
                     )
                     incident.tags.set(*tags)
                     total_inserts += 1
-        print "Total inserted entries {}".format(total_inserts)
-        print "Total rejected entries {}".format(total_rejects)
+            return (total_rejects, total_inserts)
+
+        results = None
+
+        for fn in os.listdir('data/'):
+            feed = feedparser.parse("data/{}".format(fn))
+            results = iter_entries(feed)
+
+        # feed = feedparser.parse("https://bpd.bart.gov/?feed=atom")
+        # results = iter_entries(feed)
+
+        print "Total inserted entries {}".format(results[1])
+        print "Total rejected entries {}".format(results[0])

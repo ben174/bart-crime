@@ -115,6 +115,7 @@ class Incident(models.Model):
     parsed_case = models.BooleanField(default=False)
     published_at = models.DateTimeField(null=True, blank=True)
     updated_at = models.DateTimeField(null=True, blank=True)
+    bpd_id = models.IntegerField(null=True, blank=True)
 
     tags = TaggableManager()
 
@@ -148,6 +149,8 @@ class Incident(models.Model):
         else:
             if '12th' in cleaned_location.lower():
                 return Station.objects.get(abbreviation='12TH')
+            if '16th' in cleaned_location.lower():
+                return Station.objects.get(abbreviation='16TH')
             if '19th' in cleaned_location.lower():
                 return Station.objects.get(abbreviation='19TH')
             if '24th' in cleaned_location.lower():
@@ -156,6 +159,8 @@ class Incident(models.Model):
                 return Station.objects.get(abbreviation='DUBL')
             if 'pleasant hill' in cleaned_location.lower():
                 return Station.objects.get(abbreviation='PHIL')
+            if 'del norte' in cleaned_location.lower():
+                return Station.objects.get(abbreviation='DELN')
         return None
 
     @property
@@ -202,7 +207,7 @@ def fill_station(sender, instance, **kwargs):
     if guessed_station is not None:
         instance.station = guessed_station
 
-@receiver(post_save, sender=Incident)
+# @receiver(post_save, sender=Incident)
 def tweet_incident(sender, instance, **kwargs):
     try:
         instance.tweet()
