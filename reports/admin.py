@@ -8,8 +8,10 @@ from django.db import models
 from django.core import urlresolvers
 
 class IncidentAdmin(admin.ModelAdmin):
-    list_display = ('title', 'incident_dt', 'location', 'station', 'body',
-                    'icon', 'published_at', 'updated_at',)
+    list_display = ('case', 'title', 'incident_dt', 'location', 'station',
+                    'location_id', 'body', 'icon', 'published_at',
+                    'updated_at', 'arrested', 'prohibition_order', 'warrant',
+                    'parsed_time', 'parsed_case')
     formfield_overrides = {
         models.CharField: {'widget': Textarea(attrs={'rows':10, 'cols':80})},
     }

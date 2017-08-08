@@ -7,14 +7,27 @@
     </h3>
     <div class="card-block">
       <h6 class="card-subtitle mb-2 text-muted">
-        {% if incident.location %}
-        <b>{{ incident.location }}</b> - 
+        {% if incident.station %}
+        <b><a href="/station/{{ incident.station.abbreviation }}">{{ incident.station.name }}</a></b> -
+        {% elif incident.location %}
+        <b>{{ incident.location }}</b> -
         {% endif %}
-        {{ incident.incident_dt|date:"g:i A" }}
+        <span title="{{ incident.incident_dt }}">{{ incident.incident_dt|date:"g:i A" }}</span>
+        {% if incident.case %}
+        - Case: {{ incident.case }}
+        {% endif %}
       </h6>
       <p class="card-text">{{ incident.body }}</p>
-      <a href="/incident/{{ incident.id }}" class="card-link">{% if incident.comment_set.all|length > 0 %}{{ incident.comment_set.all|length }} comment(s){% else %}add a comment{% endif %}</a>
-      <a href="/incident/{{ incident.id }}" class="card-link">permalink</a>
+      <div class="col-xs-6">
+        <i class="fa fa-{{ incident.arrested|yesno:'check,times' }}" aria-hidden="true"></i> Arrest<br />
+        <i class="fa fa-{{ incident.prohibition_order|yesno:'check,times' }}" aria-hidden="true"></i> Prohibition order<br />
+        <i class="fa fa-{{ incident.warrant|yesno:'check,times' }}" aria-hidden="true"></i> Warrant related<br />
+      </div>
+      Tags: {% for tag in incident.tags.all %}{{ tag.name }}{% include "comma.html" %}{% endfor %}
+      <div class="incident-actions">
+        <a href="/incident/{{ incident.id }}" class="card-link">{% if incident.comment_set.all|length > 0 %}{{ incident.comment_set.all|length }} comment(s){% else %}add a comment{% endif %}</a>
+        <a href="/incident/{{ incident.id }}" class="card-link">permalink</a>
+      </div>
     </div>
     <div class="card-footer text-muted" style="background-color: #e6f6ff">
       {{ incident.incident_dt|naturaltime }}

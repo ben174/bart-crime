@@ -104,10 +104,15 @@ class Incident(models.Model):
                                 related_name='incidents')
     location = models.CharField(max_length=255, null=True, blank=True)
     case = models.CharField(max_length=50, null=True, blank=True)
+    location_id = models.CharField(max_length=50, null=True, blank=True)
     title = models.CharField(max_length=255)
     body = models.CharField(max_length=5000)
     arrested = models.BooleanField(default=False)
+    prohibition_order = models.BooleanField(default=False)
+    warrant = models.BooleanField(default=False)
     tweeted = models.BooleanField(default=False)
+    parsed_time = models.BooleanField(default=False)
+    parsed_case = models.BooleanField(default=False)
     published_at = models.DateTimeField(null=True, blank=True)
     updated_at = models.DateTimeField(null=True, blank=True)
 
@@ -140,24 +145,42 @@ class Incident(models.Model):
         answer = difflib.get_close_matches(cleaned_location, station_names)
         if answer:
             return Station.objects.get(name=answer[0])
+        else:
+            if '12th' in cleaned_location.lower():
+                return Station.objects.get(abbreviation='12TH')
+            if '19th' in cleaned_location.lower():
+                return Station.objects.get(abbreviation='19TH')
+            if '24th' in cleaned_location.lower():
+                return Station.objects.get(abbreviation='24TH')
+            if 'east dublin' in cleaned_location.lower():
+                return Station.objects.get(abbreviation='DUBL')
+            if 'pleasant hill' in cleaned_location.lower():
+                return Station.objects.get(abbreviation='PHIL')
         return None
 
     @property
     def icon(self):
         lower_title = self.title.lower()
-        if 'auto' in lower_title:
+        if ('auto' in lower_title or
+                'vehicle' in lower_title or 'car' in lower_title):
             return 'car'
         if 'bicycle' in lower_title or 'bike' in lower_title:
             return 'bicycle'
-        if 'intoxication' in lower_title:
+        if ('intoxicat' in lower_title or
+            'alcohol' in lower_title or
+                'open container' in lower_title):
             return 'glass'
         if 'warrant' in lower_title:
             return 'user-secret'
-        if 'theft' in lower_title or 'robbery' in lower_title:
+        if ('theft' in lower_title or
+            'robbery' in lower_title or
+                'burglary' in lower_title):
             return 'money'
         if 'person' in lower_title:
             return 'user-secret'
-        if 'violation' in lower_title or 'obstruct' in lower_title:
+        if ('violation' in lower_title or
+            'obstruct' in lower_title or
+                'prohibit' in lower_title):
             return 'ban'
         if 'weapon' in lower_title:
             return 'cutlery'
@@ -179,7 +202,7 @@ def fill_station(sender, instance, **kwargs):
     if guessed_station is not None:
         instance.station = guessed_station
 
-# @receiver(post_save, sender=Incident)
+@receiver(post_save, sender=Incident)
 def tweet_incident(sender, instance, **kwargs):
     try:
         instance.tweet()

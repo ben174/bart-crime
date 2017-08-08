@@ -26,8 +26,9 @@ class Twitter:
 
         POST_LENGTH = 140
 
-        body = '<BOD>\n----\nDetails @ {}'.format(tiny_url)
+        body = '{} - {}\n----\nDetails @ {}'.format(incident.title,
+                                                    incident.station.name,
+                                                    tiny_url)
         short_desc = incident.title[:POST_LENGTH-(len(body) - 5)]
-        body = body.replace('<BOD>', incident.title)
 
         self.api.PostUpdate(body)
