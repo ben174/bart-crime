@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from django.contrib.auth.models import User
 from django.db import models
 import pytz
-from django.db.models.signals import post_save
+from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 
 from reports.tweet import Twitter
@@ -114,10 +114,12 @@ class Incident(models.Model):
     def station_best_guess(self):
         if not self.location:
             return None
-	station_names = list(Station.objects.all().values_list('name', flat=True))
-        answer = difflib.get_close_matches(self.location.replace(' Station', ''), station_names)
+        station_names = list(Station.objects.all().values_list('name',
+                                                               flat=True))
+        cleaned_location = self.location.replace(' Station', '')
+        answer = difflib.get_close_matches(cleaned_location, station_names)
         if answer:
-            return answer[0]
+            return Station.objects.get(name=answer[0])
         return None
 
     @property
@@ -147,6 +149,11 @@ class Incident(models.Model):
     def __unicode__(self):
         return self.title
 
+@receiver(pre_save, sender=Incident)
+def fill_station(sender, instance, **kwargs):
+    guessed_station = instance.station_best_guess
+    if guessed_station is not None:
+        instance.station = guessed_station
 
 @receiver(post_save, sender=Incident)
 def tweet_incident(sender, instance, **kwargs):
