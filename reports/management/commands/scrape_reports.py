@@ -2,7 +2,7 @@ import datetime
 
 from django.core.management.base import BaseCommand, CommandError
 
-from reports import scraper
+from reports import mail_scraper
 
 
 class Command(BaseCommand):
@@ -10,5 +10,5 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
-        scraper.scrape()
+        mail_scraper.scrape()
         self.stdout.write(self.style.SUCCESS('Successfully created incidents.'))

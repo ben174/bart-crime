@@ -60,6 +60,7 @@ class Report(models.Model):
                 report=self,
                 incident_dt=incident_dt,
                 incident_date=incident_date,
+                source='email_report',
             )
 
         self.processed = True
@@ -84,6 +85,10 @@ class Station(models.Model):
     def __unicode__(self):
         return "{} ({})".format(self.name, self.abbreviation)
 
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('station', args=[str(self.abbreviation)])
+
     @property
     def info_url(self):
         return "http://www.bart.gov/stations/{}".format(self.abbreviation)
@@ -106,16 +111,20 @@ class Incident(models.Model):
     case = models.CharField(max_length=50, null=True, blank=True)
     location_id = models.CharField(max_length=50, null=True, blank=True)
     title = models.CharField(max_length=255)
-    body = models.CharField(max_length=5000)
+    body = models.TextField(blank=True)
     arrested = models.BooleanField(default=False)
     prohibition_order = models.BooleanField(default=False)
     warrant = models.BooleanField(default=False)
     tweeted = models.BooleanField(default=False)
+    parsed_location = models.BooleanField(default=False)
     parsed_time = models.BooleanField(default=False)
     parsed_case = models.BooleanField(default=False)
     published_at = models.DateTimeField(null=True, blank=True)
     updated_at = models.DateTimeField(null=True, blank=True)
     bpd_id = models.IntegerField(null=True, blank=True)
+    raw_title = models.CharField(max_length=255)
+    raw_body = models.TextField(blank=True)
+    source = models.CharField(max_length=50, blank=True)
 
     tags = TaggableManager()
 
@@ -123,6 +132,10 @@ class Incident(models.Model):
 
     def get_url(self):
         return '{}/incident/{}'.format('https://www.bartcrimes.com', self.pk)
+
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('incident', args=[str(self.id)])
 
     def tweet(self):
         if not Incident.twitter:
@@ -202,10 +215,30 @@ class Incident(models.Model):
         return self.title
 
 @receiver(pre_save, sender=Incident)
-def fill_station(sender, instance, **kwargs):
+def fill_data(sender, instance, **kwargs):
     guessed_station = instance.station_best_guess
     if guessed_station is not None:
+        instance.parsed_location = True
         instance.station = guessed_station
+
+    title = instance.title.lower()
+    body = instance.body.lower()
+
+    arrest_keywords = ['arrest', 'booked', 'detain']
+
+    instance.arrested = (any(x in body for x in arrest_keywords) or
+                         any(x in title for x in arrest_keywords))
+
+    prohibition_keywords = ['prohibition', 'stay away', 'stay-away']
+
+    prohibited_body_check = any(x in body for x in prohibition_keywords)
+    prohibited_title_check = any(x in title for x in prohibition_keywords)
+
+    instance.prohibition_order = (prohibited_body_check or
+                                  prohibited_title_check)
+
+    instance.warrant = ('warrant' in body or
+                        'warrant' in title)
 
 # @receiver(post_save, sender=Incident)
 def tweet_incident(sender, instance, **kwargs):

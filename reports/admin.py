@@ -11,10 +11,13 @@ class IncidentAdmin(admin.ModelAdmin):
     list_display = ('case', 'bpd_id', 'title', 'incident_dt', 'location',
                     'station', 'location_id', 'body', 'icon', 'published_at',
                     'updated_at', 'arrested', 'prohibition_order', 'warrant',
-                    'parsed_time', 'parsed_case')
-    formfield_overrides = {
-        models.CharField: {'widget': Textarea(attrs={'rows':10, 'cols':80})},
-    }
+                    'parsed_location', 'parsed_time', 'parsed_case')
+    list_filter = ('station', 'parsed_location', 'parsed_time', 'parsed_case',
+                   'source')
+    search_fields = ('title', 'case', 'bpd_id')
+    ordering = ('-published_at',)
+
+    readonly_fields = ('parsed_location', 'parsed_time', 'parsed_case')
 
 class StationAdmin(admin.ModelAdmin):
     list_display = ('name', 'abbreviation', 'city')

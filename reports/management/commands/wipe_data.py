@@ -6,4 +6,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         Incident.objects.all().delete()
-        # Report.objects.all().delete()
+        Report.objects.all().delete()

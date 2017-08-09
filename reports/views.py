@@ -6,7 +6,7 @@ import hmac
 
 from crime import settings
 from reports.models import Report, Incident, Comment, Station
-from reports import scraper
+from reports import atom_scraper, mail_scraper
 
 from rest_framework import viewsets
 from reports.serializers import UserSerializer, StationSerializer, ReportSerializer, IncidentSerializer, CommentSerializer
@@ -38,10 +38,16 @@ def report_webhook(request):
     report.create_incidents()
     return HttpResponse('incident created')
 
-def do_scrape(request):
+def do_scrape_mail(request):
     if request.GET.get('trigger') != settings.get_secret('TRIGGER_KEY'):
         return HttpResponse('go away')
-    scraper.scrape()
+    mail_scraper.scrape()
+    return HttpResponse('done scraping')
+
+def do_scrape_atom(request):
+    if request.GET.get('trigger') != settings.get_secret('TRIGGER_KEY'):
+        return HttpResponse('go away')
+    atom_scraper.scrape()
     return HttpResponse('done scraping')
 
 @csrf_exempt
@@ -54,7 +60,7 @@ def handle_mailgun_webhook(request):
         return HttpResponse('Already processed')
 
     report = Report.objects.create(
-        report_dt=scraper.parse_mail_date(request.POST.get('Date')),
+        report_dt=mail_scraper.parse_mail_date(request.POST.get('Date')),
         email_id=request.POST.get('Message-Id'),
         body=request.POST.get('body-html'),
     )
