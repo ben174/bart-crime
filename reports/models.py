@@ -130,6 +130,7 @@ class Incident(models.Model):
 
     twitter = None
 
+    @property
     def get_url(self):
         return '{}/incident/{}'.format('https://www.bartcrimes.com', self.pk)
 
@@ -147,7 +148,7 @@ class Incident(models.Model):
 
     @property
     def tweet_text(self):
-        return ''
+        return '{} @ {}'.format(self.title, self.station.abbreviation)
 
     @property
     def station_best_guess(self):

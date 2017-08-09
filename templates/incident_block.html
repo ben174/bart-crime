@@ -23,7 +23,11 @@
         <i class="fa fa-{{ incident.prohibition_order|yesno:'check,times' }}" aria-hidden="true"></i> Prohibition order<br />
         <i class="fa fa-{{ incident.warrant|yesno:'check,times' }}" aria-hidden="true"></i> Warrant related<br />
       </div>
-      {% for tag in incident.tags.all %}<span class="badge badge-pill badge-default">{{ tag.name }}</span>{% endfor %}
+      {% for tag in incident.tags.all %}<span class="badge badge-pill badge-default">{{ tag.name }}</span>{% endfor %}<br />
+      <div class="share-buttons">
+        <a href="https://twitter.com/share" class="twitter-share-button" data-text="{{ incident.tweet_text }}" data-url="{{ incident.get_url }}" data-via="bart_crimes" data-related="bart_crimes" data-show-count="false">Tweet</a>&nbsp;
+        <div class="fb-share-button" data-href="{{ incident.get_url }}" data-layout="button_count" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{ incident.get_url|urlencode }}&amp;src=sdkpreparse">Share</a></div>
+      </div>
       <div class="incident-actions">
         <a href="/incident/{{ incident.id }}" class="card-link">{% if incident.comment_set.all|length > 0 %}{{ incident.comment_set.all|length }} comment(s){% else %}add a comment{% endif %}</a>
         <a href="/incident/{{ incident.id }}" class="card-link">permalink</a>
