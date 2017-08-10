@@ -31,8 +31,9 @@ class IncidentAdmin(admin.ModelAdmin):
         return super(IncidentAdmin, self).get_queryset(
             request).prefetch_related('tags')
 
-    def tag_list(self, obj):
+    def tag_list(self, obj):  # pylint: disable=no-self-use
         return u", ".join(o.name for o in obj.tags.all())
+
     tag_list.short_description = 'Tags'
 
 

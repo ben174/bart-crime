@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    id = serializers.ReadOnlyField()
+    id = serializers.ReadOnlyField()  # pylint: disable=invalid-name
 
     class Meta:
         model = User
@@ -12,7 +12,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class StationSerializer(serializers.HyperlinkedModelSerializer):
-    id = serializers.ReadOnlyField()
+    id = serializers.ReadOnlyField()  # pylint: disable=invalid-name
     info_url = serializers.ReadOnlyField()
     incidents = serializers.ReadOnlyField(source='incidents_info')
 
@@ -22,7 +22,7 @@ class StationSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class IncidentSerializer(serializers.HyperlinkedModelSerializer):
-    id = serializers.ReadOnlyField()
+    id = serializers.ReadOnlyField()  # pylint: disable=invalid-name
 
     class Meta:
         model = Incident
@@ -30,7 +30,7 @@ class IncidentSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class CommentSerializer(serializers.HyperlinkedModelSerializer):
-    id = serializers.ReadOnlyField()
+    id = serializers.ReadOnlyField()  # pylint: disable=invalid-name
 
     class Meta:
         model = Comment

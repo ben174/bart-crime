@@ -1,13 +1,13 @@
-import datetime
-import random
 from urllib2 import urlopen
 
 import twitter
 
 from crime import settings
 
+TINYURL_API_FMT = 'http://tinyurl.com/api-create.php?url={}'
 
-class Twitter:
+
+class Twitter(object):
     def __init__(self):
         self.api = None
 
@@ -21,15 +21,11 @@ class Twitter:
         )
 
     def post_incident(self, incident):
-        f = urlopen(
-            'http://tinyurl.com/api-create.php?url={0}'.format(incident.get_url()))
-        tiny_url = f.read()
-
-        POST_LENGTH = 140
+        tiny_url = urlopen(TINYURL_API_FMT.format(incident.get_url())).read()
 
         body = '{} - {}\n----\nDetails @ {}'.format(incident.title,
                                                     incident.station.name,
                                                     tiny_url)
-        short_desc = incident.title[:POST_LENGTH - (len(body) - 5)]
+        # short_desc = incident.title[:140 - (len(body) - 5)]
 
         self.api.PostUpdate(body)
