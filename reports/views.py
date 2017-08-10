@@ -3,12 +3,15 @@ from __future__ import unicode_literals
 import datetime
 
 from crime import settings
-from reports.models import Report, Incident, Comment
+from reports.models import Report, Incident, Comment, Station
 from reports import scraper
+
+from rest_framework import viewsets
+from reports.serializers import UserSerializer, StationSerializer, ReportSerializer, IncidentSerializer, CommentSerializer
 
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
-
+from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
@@ -71,3 +74,39 @@ def incident(request, incident_id):
         Comment.objects.create(incident=incident, text=request.POST.get('comment'))
         return redirect('incident', incident_id=incident_id)
     return render(request, 'incident.html', {'incident': incident})
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = User.objects.all().order_by('-date_joined')
+    serializer_class = UserSerializer
+
+class StationViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint that allows stations to be viewed
+    """
+    queryset = Station.objects.all().order_by('-name')
+    serializer_class = StationSerializer
+
+class ReportViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint that allows reports to be viewed
+    """
+    queryset = Report.objects.all().order_by('-created_dt')
+    serializer_class = ReportSerializer
+
+
+class IncidentViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint that allows incidents to be viewed
+    """
+    queryset = Incident.objects.all().order_by('-incident_dt')
+    serializer_class = IncidentSerializer
+
+class CommentViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint that allows comments to be viewed
+    """
+    queryset = Comment.objects.all().order_by('-created_dt')
+    serializer_class = CommentSerializer
