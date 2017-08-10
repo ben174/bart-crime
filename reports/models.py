@@ -148,7 +148,10 @@ class Incident(models.Model):
 
     @property
     def tweet_text(self):
-        return '{} @ {}'.format(self.title, self.station.abbreviation)
+        location = self.location
+        if self.station is not None:
+            location = self.station.abbreviation
+        return '{} @ {}'.format(self.title, location)
 
     @property
     def station_best_guess(self):
