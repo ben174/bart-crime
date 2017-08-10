@@ -36,7 +36,6 @@ urlpatterns = [
     url(r'^station/(?P<station_id>[\w]+)/', views.station, name='station'),
     url(r'^scrape/mail/', views.do_scrape_mail),
     url(r'^scrape/atom/', views.do_scrape_atom),
-    url(r'^mailgun/', views.handle_mailgun_webhook),
     url(r'^$', views.home),
     url(r'^api/v0/', include(router.urls)),
 ]
