@@ -9,26 +9,11 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 
 from crime import settings
-from reports.models import Report, Incident, Comment, Station
-from reports import atom_scraper, mail_scraper
+from reports.models import Incident, Comment, Station
+from reports import atom_scraper
 from reports.serializers import (UserSerializer, StationSerializer,
-                                 ReportSerializer, IncidentSerializer,
-                                 CommentSerializer)
+                                 IncidentSerializer, CommentSerializer)
 
-
-@csrf_exempt
-def report_webhook(request):
-    if request.GET.get('trigger') != settings.get_secret('TRIGGER_KEY'):
-        return HttpResponse('go away')
-    report = Report.objects.create(body=request.body)
-    report.create_incidents()
-    return HttpResponse('incident created')
-
-def do_scrape_mail(request):
-    if request.GET.get('trigger') != settings.get_secret('TRIGGER_KEY'):
-        return HttpResponse('go away')
-    mail_scraper.scrape()
-    return HttpResponse('done scraping')
 
 def do_scrape_atom(request):
     if request.GET.get('trigger') != settings.get_secret('TRIGGER_KEY'):
@@ -100,14 +85,6 @@ class StationViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = Station.objects.all().order_by('-abbreviation')
     serializer_class = StationSerializer
-
-class ReportViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    API endpoint that allows reports to be viewed
-    """
-    queryset = Report.objects.all().order_by('-created_dt')
-    serializer_class = ReportSerializer
-
 
 class IncidentViewSet(viewsets.ReadOnlyModelViewSet):
     """

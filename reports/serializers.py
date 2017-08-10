@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from reports.models import Report, Incident, Comment, Station
+from reports.models import Incident, Comment, Station
 from rest_framework import serializers
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -15,14 +15,6 @@ class StationSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Station
-        fields = ('__all__')
-
-class ReportSerializer(serializers.HyperlinkedModelSerializer):
-    id = serializers.ReadOnlyField()
-    incidents = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-
-    class Meta:
-        model = Report
         fields = ('__all__')
 
 class IncidentSerializer(serializers.HyperlinkedModelSerializer):

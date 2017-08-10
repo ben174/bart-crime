@@ -15,62 +15,6 @@ from taggit.managers import TaggableManager
 from reports.tweet import Twitter
 
 
-class Report(models.Model):
-    report_dt = models.DateTimeField(null=True, blank=True)
-    body = models.TextField()
-    processed = models.BooleanField(default=False)
-    email_id = models.CharField(max_length=100, null=True, blank=True)
-    created_dt = models.DateTimeField(auto_now_add=True)
-
-    @property
-    def fixed_body(self):
-        # their class names are all preceeded with some random garbage, clean that up
-        return re.sub(r'(<div class=")(.*)(rss_)(.+?")', r'\1\3\4', self.body)
-
-    @property
-    def incidents_count(self):
-        return self.incidents.all().count()
-
-    def create_incidents(self):
-        soup = BeautifulSoup(self.fixed_body, 'html.parser')
-        other_soup = BeautifulSoup(self.fixed_body, 'html.parser')
-
-        for incident_html in soup.find_all('div', class_='rss_item'):
-            title = incident_html.find(class_='rss_title').a.text.replace('–', '-')
-            location, incident_dt, incident_date = None, None, None
-            body = incident_html.find(class_='rss_description').text
-            match = re.match(r'^(\d+)\/(\d+)\/(\d+)[\s,]+(\d{1,2}):?(\d{2})', body)
-            if match:
-                month, day, year, hour, minute = [int(m) for m in match.groups()]
-                if year < 2000:
-                    year += 2000
-                body = '\r\n'.join(body.split('\r\n')[1:])
-                incident_dt = datetime.datetime(year, month, day, hour, minute)
-                incident_date = datetime.date(year, month, day)
-                incident_dt = pytz.timezone('America/Los_Angeles').localize(incident_dt)
-
-            if ' - ' in title:
-                title_split = title.split(' - ')
-                title = title_split[0]
-                location = title_split[1]
-            incident = Incident.objects.create(
-                title=title,
-                body=body,
-                location=location,
-                report=self,
-                incident_dt=incident_dt,
-                incident_date=incident_date,
-                source='email_report',
-            )
-
-        self.processed = True
-        self.save()
-
-    def __unicode__(self):
-        return '{} - {} incident(s)'.format(self.report_dt,
-                                            self.incidents_count)
-
-
 class Station(models.Model):
     name = models.CharField(max_length=100)
     abbreviation = models.CharField(max_length=5)
@@ -103,8 +47,6 @@ class Station(models.Model):
 class Incident(models.Model):
     incident_dt = models.DateTimeField(null=True, blank=True)
     incident_date = models.DateField(null=True, blank=True)
-    report = models.ForeignKey(Report, null=True, blank=True,
-                               related_name='incidents')
     station = models.ForeignKey(Station, null=True, blank=True,
                                 related_name='incidents')
     location = models.CharField(max_length=255, null=True, blank=True)
