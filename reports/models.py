@@ -186,10 +186,10 @@ def fill_data(sender, instance, **kwargs):
     instance.warrant = ('warrant' in body or
                         'warrant' in title)
 
-# @receiver(post_save, sender=Incident)
+@receiver(post_save, sender=Incident)
 def tweet_incident(sender, instance, **kwargs):
     try:
-        #instance.tweet()
+        instance.tweet()
         pass
     except Exception as e:
         print 'Exception while tweeting incident: {}'.format(str(e))
