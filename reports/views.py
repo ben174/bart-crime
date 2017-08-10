@@ -16,6 +16,7 @@ from reports.serializers import (UserSerializer, StationSerializer,
 
 
 def do_scrape_atom(request):
+    return
     if request.GET.get('trigger') != settings.get_secret('TRIGGER_KEY'):
         return HttpResponse('go away')
     atom_scraper.scrape()
