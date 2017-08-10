@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from reports.models import Station, Incident
+from reports.models import Station, Incident, Comment
 
 from django.contrib import admin
 from django.forms import TextInput, Textarea, ModelForm
@@ -13,8 +13,8 @@ from taggit_labels.widgets import LabelWidget
 class IncidentForm(ModelForm):
     tags = TagField(required=False, widget=LabelWidget)
 
-class IncidentAdmin(admin.ModelAdmin):
 
+class IncidentAdmin(admin.ModelAdmin):
     form = IncidentForm
 
     list_display = ('case', 'tag_list', 'bpd_id', 'title', 'incident_dt',
@@ -36,9 +36,16 @@ class IncidentAdmin(admin.ModelAdmin):
         return u", ".join(o.name for o in obj.tags.all())
     tag_list.short_description = 'Tags'
 
+
 class StationAdmin(admin.ModelAdmin):
     list_display = ('name', 'abbreviation', 'city')
     ordering = ('abbreviation',)
 
+
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('text', 'created_dt', 'incident', 'user')
+
+
 admin.site.register(Incident, IncidentAdmin)
 admin.site.register(Station, StationAdmin)
+admin.site.register(Comment, CommentAdmin)
