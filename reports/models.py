@@ -16,8 +16,8 @@ from reports.tweet import Twitter
 
 
 class Station(models.Model):
-    name = models.CharField(max_length=100)
-    abbreviation = models.CharField(max_length=5)
+    name = models.CharField(max_length=100, unique=True)
+    abbreviation = models.CharField(max_length=5, unique=True)
     latitude = models.FloatField()
     longitude = models.FloatField()
     address = models.CharField(max_length=100)
