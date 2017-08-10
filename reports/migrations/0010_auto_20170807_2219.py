@@ -18,16 +18,30 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='incident',
             name='tags',
-            field=taggit.managers.TaggableManager(help_text='A comma-separated list of tags.', through='taggit.TaggedItem', to='taggit.Tag', verbose_name='Tags'),
+            field=taggit.managers.TaggableManager(
+                help_text='A comma-separated list of tags.',
+                through='taggit.TaggedItem',
+                to='taggit.Tag',
+                verbose_name='Tags'),
         ),
         migrations.AlterField(
             model_name='incident',
             name='report',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='incidents', to='reports.Report'),
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='incidents',
+                to='reports.Report'),
         ),
         migrations.AlterField(
             model_name='incident',
             name='station',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='incidents', to='reports.Station'),
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='incidents',
+                to='reports.Station'),
         ),
     ]

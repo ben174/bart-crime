@@ -3,9 +3,7 @@ from __future__ import unicode_literals
 from reports.models import Station, Incident, Comment
 
 from django.contrib import admin
-from django.forms import TextInput, Textarea, ModelForm
-from django.db import models
-from django.core import urlresolvers
+from django.forms import ModelForm
 from taggit.forms import TagField
 from taggit_labels.widgets import LabelWidget
 
@@ -30,7 +28,8 @@ class IncidentAdmin(admin.ModelAdmin):
     readonly_fields = ('parsed_location', 'parsed_time', 'parsed_case')
 
     def get_queryset(self, request):
-        return super(IncidentAdmin, self).get_queryset(request).prefetch_related('tags')
+        return super(IncidentAdmin, self).get_queryset(
+            request).prefetch_related('tags')
 
     def tag_list(self, obj):
         return u", ".join(o.name for o in obj.tags.all())

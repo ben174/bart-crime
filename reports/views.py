@@ -6,7 +6,6 @@ from rest_framework import viewsets
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
-from django.views.decorators.csrf import csrf_exempt
 
 from crime import settings
 from reports.models import Incident, Comment, Station
@@ -16,22 +15,23 @@ from reports.serializers import (UserSerializer, StationSerializer,
 
 
 def do_scrape_atom(request):
-    return
     if request.GET.get('trigger') != settings.get_secret('TRIGGER_KEY'):
         return HttpResponse('go away')
     atom_scraper.scrape()
     return HttpResponse('done scraping')
 
+
 def home(request):
-    date = datetime.datetime.now()
-    return listing(request, date)
+    return listing(request, datetime.datetime.now())
+
 
 def about(request):
     return render(request, 'about.html')
 
-def date(request, year, month, day):
-    date = datetime.date(int(year), int(month), int(day))
-    return listing(request, date)
+
+def incidents_for_date(request, year, month, day):
+    return listing(request, datetime.date(int(year), int(month), int(day)))
+
 
 def listing(request, date):
     tomorrow = datetime.datetime.now() + datetime.timedelta(days=1)
@@ -62,23 +62,29 @@ def listing(request, date):
         'next_date': next_date,
     })
 
-def incident(request, incident_id):
+
+def single_incident(request, incident_id):
     incident = get_object_or_404(Incident, pk=incident_id)
     if request.method == 'POST':
-        Comment.objects.create(incident=incident, text=request.POST.get('comment'))
+        Comment.objects.create(
+            incident=incident, text=request.POST.get('comment'))
         return redirect('incident', incident_id=incident_id)
     return render(request, 'incident.html', {'incident': incident})
 
-def station(request, station_id):
+
+def view_station(request, station_id):
     station = get_object_or_404(Station, abbreviation=station_id)
     return render(request, 'station.html', {'station': station})
 
+
+# pylint: disable=too-many-ancestors
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
+
 
 class StationViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -87,12 +93,14 @@ class StationViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Station.objects.all().order_by('-abbreviation')
     serializer_class = StationSerializer
 
+
 class IncidentViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows incidents to be viewed
     """
     queryset = Incident.objects.all().order_by('-incident_dt')
     serializer_class = IncidentSerializer
+
 
 class CommentViewSet(viewsets.ReadOnlyModelViewSet):
     """

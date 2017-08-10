@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import datetime
-import re
 import difflib
 
-from bs4 import BeautifulSoup
 from django.contrib.auth.models import User
 from django.db import models
-import pytz
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from taggit.managers import TaggableManager
@@ -131,19 +127,19 @@ class Incident(models.Model):
         if 'bicycle' in lower_title or 'bike' in lower_title:
             return 'bicycle'
         if ('intoxicat' in lower_title or
-            'alcohol' in lower_title or
+                'alcohol' in lower_title or
                 'open container' in lower_title):
             return 'glass'
         if 'warrant' in lower_title:
             return 'user-secret'
         if ('theft' in lower_title or
-            'robbery' in lower_title or
+                'robbery' in lower_title or
                 'burglary' in lower_title):
             return 'money'
         if 'person' in lower_title:
             return 'user-secret'
         if ('violation' in lower_title or
-            'obstruct' in lower_title or
+                'obstruct' in lower_title or
                 'prohibit' in lower_title):
             return 'ban'
         if 'weapon' in lower_title:
@@ -159,6 +155,7 @@ class Incident(models.Model):
 
     def __unicode__(self):
         return self.title
+
 
 @receiver(pre_save, sender=Incident)
 def fill_data(sender, instance, **kwargs):
@@ -186,14 +183,13 @@ def fill_data(sender, instance, **kwargs):
     instance.warrant = ('warrant' in body or
                         'warrant' in title)
 
-# @receiver(post_save, sender=Incident)
+
+@receiver(post_save, sender=Incident)
 def tweet_incident(sender, instance, **kwargs):
     try:
-        #instance.tweet()
-        pass
-    except Exception as e:
-        print 'Exception while tweeting incident: {}'.format(str(e))
-
+        instance.tweet()
+    except Exception as exc:
+        print 'Exception while tweeting incident: {}'.format(str(exc))
 
 
 class Comment(models.Model):
@@ -201,3 +197,6 @@ class Comment(models.Model):
     created_dt = models.DateTimeField(auto_now_add=True)
     incident = models.ForeignKey(Incident)
     text = models.TextField()
+
+    def __unicode__(self):
+        return self.created_dt
