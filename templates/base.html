@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Publishing daily BART crime reports, which BART has chosen to stop sharing.">
 
-	<title>Bart Crimes - Making Public Information Public</title>
+	<title>BART Crimes - Making Public Information Public</title>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
@@ -71,53 +71,71 @@
 	  margin: 0px 30px;
 	}
 
+  .share-buttons {
+    margin: 5px;
+    line-height: 10px;
+  }
+
   </style>
+
+  <meta name="twitter:site" content="@bart_crimes" />
+  <meta property="og:url" content="https://www.bartcrimes.com{{ request.path }}" />
+  <meta property="fb:app_id" content="252066728645375" />
+  {% block head %}{% endblock %}
   </head>
   <body>
-	<nav class="navbar bg-primary navbar-toggleable-md">
-	  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-		<span class="navbar-toggler-icon"></span>
-	  </button>
-      <a class="navbar-brand" href="/">
-        <svg id="logo"  viewBox="0 0 190 120" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://web.resource.org/cc/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" id="svg1923" sodipodi:version="0.32" inkscape:version="0.41.1" width="85" height="60" version="1.0" sodipodi:docbase="/home/molotov/images/wikipedia/svg" sodipodi:docname="Bart-logo.svg">
-          <path style="fill:#0083d2" d="M 132.46875 38.406250 C 120.13087 38.402552 115.51461 39.071225 105.68750 43.687500 C 100.10878 46.308085 97.359952 47.982548 97.187500 49.687500 L 92.281250 98.062500 L 99.093750 104.59375 L 103.78125 107.56250 C 112.05703 112.82352 120.42153 114.73138 133.25000 114.28125 C 142.92538 113.94176 145.32870 113.49218 150.65625 111.06250 C 153.73363 109.65902 156.21875 109.17944 156.21875 110.56250 L 156.40625 114.18750 L 172.15625 114.18750 L 185.90625 114.18750 L 185.71875 75.468750 L 185.71875 38.406250 L 173.21875 38.406250 L 156.21875 38.406250 L 156.21875 42.906250 C 147.08846 38.935535 143.04691 38.409421 132.46875 38.406250 z M 132.56250 53.906250 C 135.45009 53.848774 138.30334 54.493698 141.28125 55.843750 C 148.92016 59.306902 153.17329 64.760366 154.65625 72.937500 C 156.18457 81.364774 150.18985 92.069899 141.81250 95.875000 C 128.67291 101.84318 113.55984 93.436132 110.78125 78.625000 C 109.23445 70.379854 115.07249 60.154934 123.59375 56.187500 C 126.75588 54.715232 129.67491 53.963726 132.56250 53.906250 z " id="path1889"/>
-          <path style="fill:#000000" d="M 2.4687500 4.4687500 L 2.4687500 57.218750 L 2.6562500 114.18750 L 15.406250 114.18750 L 33.406250 114.18750 L 33.031250 108.93750 C 34.147723 106.00096 33.790106 109.20119 37.812500 111.28125 C 39.430450 112.11792 45.582763 113.42000 48.750000 114.18750 C 62.949731 117.62847 79.301641 114.24494 92.656250 107.06250 C 104.57402 100.65281 108.89829 89.809027 109.46875 75.312500 C 109.80454 66.779576 107.15788 64.038067 105.25000 58.968750 C 101.15692 48.093262 88.188391 40.356883 73.218750 36.843750 C 64.522804 34.802952 50.447947 35.606377 43.875000 38.093750 C 40.627147 39.322822 36.538339 41.673983 33.218750 42.687500 L 33.218750 22.562500 L 33.218750 4.4687500 L 15.968750 4.4687500 L 2.4687500 4.4687500 z M 59.656250 54.000000 C 66.532371 53.457622 73.925006 55.943850 79.593750 62.250000 C 87.406536 70.941272 83.480685 88.125767 72.656250 94.468750 C 58.318105 101.78352 42.329805 94.376306 40.093750 78.062500 C 38.191061 64.180874 48.196048 54.903964 59.656250 54.000000 z " id="path1885"/>
-          <div xmlns="http://www.w3.org/1999/xhtml"></div>
-        </svg>
-        <div id="logotext">Bart Crimes</div>
-      </a>
-	  <div class="collapse navbar-collapse" id="navbarNavDropdown">
-		<ul class="navbar-nav">
-		  <li class="nav-item active">
-			<a class="nav-link" href="/">Home</a>
-		  </li>
-		  <li class="nav-item">
-			<a class="nav-link" href="/about">About</a>
-		  </li>
-		  <li class="nav-item">
-			<a class="nav-link" href="/about">Donate</a>
-		  </li>
-		</ul>
-	  </div>
-	</nav>
-	<div class="container">
-	  {% block content %}
-	  {% endblock %}
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.10&appId=252066728645375";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  	<nav class="navbar bg-primary navbar-toggleable-md">
+  	  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+  		<span class="navbar-toggler-icon"></span>
+  	  </button>
+        <a class="navbar-brand" href="/">
+          <svg id="logo" viewBox="0 0 190 120" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://web.resource.org/cc/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" id="svg1923" sodipodi:version="0.32" inkscape:version="0.41.1" width="85" height="60" version="1.0" sodipodi:docbase="/home/molotov/images/wikipedia/svg" sodipodi:docname="Bart-logo.svg">
+            <path style="fill:#0083d2" d="M 132.46875 38.406250 C 120.13087 38.402552 115.51461 39.071225 105.68750 43.687500 C 100.10878 46.308085 97.359952 47.982548 97.187500 49.687500 L 92.281250 98.062500 L 99.093750 104.59375 L 103.78125 107.56250 C 112.05703 112.82352 120.42153 114.73138 133.25000 114.28125 C 142.92538 113.94176 145.32870 113.49218 150.65625 111.06250 C 153.73363 109.65902 156.21875 109.17944 156.21875 110.56250 L 156.40625 114.18750 L 172.15625 114.18750 L 185.90625 114.18750 L 185.71875 75.468750 L 185.71875 38.406250 L 173.21875 38.406250 L 156.21875 38.406250 L 156.21875 42.906250 C 147.08846 38.935535 143.04691 38.409421 132.46875 38.406250 z M 132.56250 53.906250 C 135.45009 53.848774 138.30334 54.493698 141.28125 55.843750 C 148.92016 59.306902 153.17329 64.760366 154.65625 72.937500 C 156.18457 81.364774 150.18985 92.069899 141.81250 95.875000 C 128.67291 101.84318 113.55984 93.436132 110.78125 78.625000 C 109.23445 70.379854 115.07249 60.154934 123.59375 56.187500 C 126.75588 54.715232 129.67491 53.963726 132.56250 53.906250 z " id="path1889"/>
+            <path style="fill:#000000" d="M 2.4687500 4.4687500 L 2.4687500 57.218750 L 2.6562500 114.18750 L 15.406250 114.18750 L 33.406250 114.18750 L 33.031250 108.93750 C 34.147723 106.00096 33.790106 109.20119 37.812500 111.28125 C 39.430450 112.11792 45.582763 113.42000 48.750000 114.18750 C 62.949731 117.62847 79.301641 114.24494 92.656250 107.06250 C 104.57402 100.65281 108.89829 89.809027 109.46875 75.312500 C 109.80454 66.779576 107.15788 64.038067 105.25000 58.968750 C 101.15692 48.093262 88.188391 40.356883 73.218750 36.843750 C 64.522804 34.802952 50.447947 35.606377 43.875000 38.093750 C 40.627147 39.322822 36.538339 41.673983 33.218750 42.687500 L 33.218750 22.562500 L 33.218750 4.4687500 L 15.968750 4.4687500 L 2.4687500 4.4687500 z M 59.656250 54.000000 C 66.532371 53.457622 73.925006 55.943850 79.593750 62.250000 C 87.406536 70.941272 83.480685 88.125767 72.656250 94.468750 C 58.318105 101.78352 42.329805 94.376306 40.093750 78.062500 C 38.191061 64.180874 48.196048 54.903964 59.656250 54.000000 z " id="path1885"/>
+            <div xmlns="http://www.w3.org/1999/xhtml"></div>
+          </svg>
+          <div id="logotext">Bart Crimes</div>
+        </a>
+  	  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+  		<ul class="navbar-nav">
+  		  <li class="nav-item active">
+  			<a class="nav-link" href="/">Home</a>
+  		  </li>
+  		  <li class="nav-item">
+  			<a class="nav-link" href="/about">About</a>
+  		  </li>
+  		  <li class="nav-item">
+  			<a class="nav-link" href="/about">Donate</a>
+  		  </li>
+  		</ul>
+  	  </div>
+  	</nav>
+  	<div class="container">
+  	  {% block content %}
+  	  {% endblock %}
       <hr>
-	  <footer class="footer">
-		<p>Made with 💩 by <a href="http://www.bugben.com">Ben Friedland</a> &bull; <i class="fa fa-github" aria-hidden="true"></i><a href="http://www.github.com/ben174/bart-crime"> View the source</a> &bull;
-        
-        <i class="fa fa-info" aria-hidden="true"></i> <a href="/about">About this site</a> &bull;
-        <i class="fa fa-twitter" aria-hidden="true"></i> <a href="https://twitter.com/bart_crimes">@bart_crimes</a></p>
+  	  <footer class="footer">
+    		<p>Made with 💩 by <a href="http://www.bugben.com">Ben Friedland</a> &bull;
+          <i class="fa fa-github" aria-hidden="true"></i><a href="http://www.github.com/ben174/bart-crime"> View the source</a> &bull;
+          <i class="fa fa-info" aria-hidden="true"></i> <a href="/about">About this site</a> &bull;
+          <i class="fa fa-twitter" aria-hidden="true"></i> <a href="https://twitter.com/bart_crimes">@bart_crimes</a>
         </p>
-	  </footer>
-	</div>
-
+  	  </footer>
+  	</div>
 
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
   </body>
 </html>
 

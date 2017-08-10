@@ -2,30 +2,23 @@
 from __future__ import unicode_literals
 import datetime
 
-from crime import settings
-from reports.models import Report, Incident, Comment, Station
-from reports import scraper
-
 from rest_framework import viewsets
-from reports.serializers import UserSerializer, StationSerializer, ReportSerializer, IncidentSerializer, CommentSerializer
-
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 
-@csrf_exempt
-def report_webhook(request):
-    if request.GET.get('trigger') != settings.get_secret('TRIGGER_KEY'):
-        return HttpResponse('go away')
-    report = Report.objects.create(body=request.body)
-    report.create_incidents()
-    return HttpResponse('incident created')
+from crime import settings
+from reports.models import Incident, Comment, Station
+from reports import atom_scraper
+from reports.serializers import (UserSerializer, StationSerializer,
+                                 IncidentSerializer, CommentSerializer)
 
-def do_scrape(request):
+
+def do_scrape_atom(request):
     if request.GET.get('trigger') != settings.get_secret('TRIGGER_KEY'):
         return HttpResponse('go away')
-    scraper.scrape()
+    atom_scraper.scrape()
     return HttpResponse('done scraping')
 
 def home(request):
@@ -75,6 +68,10 @@ def incident(request, incident_id):
         return redirect('incident', incident_id=incident_id)
     return render(request, 'incident.html', {'incident': incident})
 
+def station(request, station_id):
+    station = get_object_or_404(Station, abbreviation=station_id)
+    return render(request, 'station.html', {'station': station})
+
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -86,16 +83,8 @@ class StationViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows stations to be viewed
     """
-    queryset = Station.objects.all().order_by('-name')
+    queryset = Station.objects.all().order_by('-abbreviation')
     serializer_class = StationSerializer
-
-class ReportViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    API endpoint that allows reports to be viewed
-    """
-    queryset = Report.objects.all().order_by('-created_dt')
-    serializer_class = ReportSerializer
-
 
 class IncidentViewSet(viewsets.ReadOnlyModelViewSet):
     """

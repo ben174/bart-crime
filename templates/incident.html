@@ -1,11 +1,37 @@
 {% extends 'base.html' %}
+{% block head %}
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="{{ incident.tweet_text }}" />
+<meta name="twitter:description" content="{{ incident.body }}" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="{{ incident.tweet_text }}" />
+<meta property="og:description" content="{{ incident.body }}" />
+<meta property="og:updated_time" content="{{ incident.updated_time }}" />
+{% endblock %}
 {% block content %}
 <h3>{{ incident.title }}</h3>
 {% if incident.incident_dt %}
 <h4>{{ incident.incident_dt }}</h4>
 {% endif %}
+{% if incident.station %}
+<h5><a href="/station/{{ incident.station.abbreviation }}">{{ incident.station.name }}</a></h5>
+{% elif incident.location %}
 <h5>{{ incident.location }}</h5>
+{% endif %}
+{% if incident.case %}
+<h6>Case: {{ incident.case }}</h6>
+{% endif %}
 <p class="lead">{{ incident.body }}</p>
+<div class="col-xs-6">
+  <i class="fa fa-{{ incident.arrested|yesno:'check,times' }}" aria-hidden="true"></i> Arrest<br />
+  <i class="fa fa-{{ incident.prohibition_order|yesno:'check,times' }}" aria-hidden="true"></i> Prohibition order<br />
+  <i class="fa fa-{{ incident.warrant|yesno:'check,times' }}" aria-hidden="true"></i> Warrant related<br />
+</div>
+{% for tag in incident.tags.all %}<span class="badge badge-pill badge-default">{{ tag.name }}</span>&nbsp;{% endfor %}<br />
+<div class="share-buttons">
+  <a href="https://twitter.com/share" class="twitter-share-button" data-text="{{ incident.tweet_text }}" data-url="{{ incident.get_url }}" data-via="bart_crimes" data-related="bart_crimes" data-show-count="false">Tweet</a>
+  <div class="fb-share-button" data-href="{{ incident.get_url }}" data-layout="button_count" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{ incident.get_url|urlencode }}&amp;src=sdkpreparse">Share</a></div>
+</div>
 {% for comment in incident.comment_set.all %}
 
 <div class="card">
