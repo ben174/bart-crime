@@ -88,7 +88,10 @@ def scrape(local=False, skip_existing=True,
                 parsed_time, parsed_case = False, False
                 tags = set()
                 for tag in entry['tags']:
-                    tags.add(tag['term'])
+                    term = tag['term']
+                    if term.islower():
+                        term = term.title()
+                    tags.add(term)
                 case_id_matches = re.search(CASE_ID_REGEX, body)
                 if case_id_matches is not None:
                     case_id = case_id_matches.group(1)
