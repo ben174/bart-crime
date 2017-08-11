@@ -44,6 +44,7 @@ class StationAdmin(admin.ModelAdmin):
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('text', 'created_dt', 'incident', 'user')
+    raw_id_fields = ('incident',)
 
 
 admin.site.register(Incident, IncidentAdmin)

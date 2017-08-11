@@ -21,11 +21,9 @@ class Twitter(object):
         )
 
     def post_incident(self, incident):
-        tiny_url = urlopen(TINYURL_API_FMT.format(incident.get_url())).read()
-
-        body = '{} - {}\n----\nDetails @ {}'.format(incident.title,
-                                                    incident.station.name,
-                                                    tiny_url)
-        # short_desc = incident.title[:140 - (len(body) - 5)]
+        body = '{} - {}\n----\n{}'.format(incident.title,
+                                          incident.station.name,
+                                          incident.get_url)
+        # short_desc = incident.title[:140-(len(body) - 5)]
 
         self.api.PostUpdate(body)
