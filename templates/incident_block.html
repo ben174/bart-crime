@@ -1,7 +1,7 @@
 {% load humanize %}
-<div class="col-sm-6">
-  <div class="card">
-    <h3 class="card-header"><a class="incidentTitle" href="/incident/{{ incident.id }}"><i aria-hidden="true" class="fa fa-{{ incident.icon }}"></i> {{ incident.title }}</a></h3>
+<div class="col-sm-6 d-flex pb-3">
+  <div class="card card bg-light">
+    <h3 class="card-header"><a class="incident-title" href="/incident/{{ incident.id }}"><i aria-hidden="true" class="fa fa-{{ incident.icon }}"></i> {{ incident.title }}</a></h3>
     <div class="card-body">
       <h6 class="card-subtitle mb-2 text-muted">{% if incident.station %} <b><a href="/station/{{ incident.station.abbreviation }}">{{ incident.station.name }}</a></b> - {% elif incident.location %} <b>{{ incident.location }}</b> - {% endif %} <span title="{{ incident.incident_dt }}">{{ incident.incident_dt|date:"g:i A" }}</span> {% if incident.case %} - Case: {{ incident.case }} {% endif %}</h6>
       <p class="card-text">{{ incident.body }}</p>
@@ -17,7 +17,7 @@
         </div>
       </div>
       <div class="incident-actions">
-        <a class="card-link" href="/incident/{{ incident.id }}">{% if incident.comment_set.all|length > 0 %}{{ incident.comment_set.all|length }} comment(s){% else %}add a comment{% endif %}</a> <a class="card-link" href="/incident/{{ incident.id }}">permalink</a>
+        <a class="card-link" href="/incident/{{ incident.id }}">{% if incident.comment_set.all|length > 0 %}{{ incident.comment_set.all|length }} comment(s){% else %}add a comment{% endif %}</a>
       </div>
     </div>
     <div class="card-footer text-muted">

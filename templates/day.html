@@ -1,4 +1,5 @@
-<div class="row">
+{% load humanize %}
+<div class="row equal">
 {% for incident in incidents %}
   {% include "incident_block.html" %}
 {% endfor %}
