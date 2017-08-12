@@ -1,6 +1,6 @@
 {% load humanize %}
 <div class="row equal">
 {% for incident in incidents %}
-  {% include "incident_block.html" %}
+  {% include "incident_block.html" with date="true" %}
 {% endfor %}
 </div>
