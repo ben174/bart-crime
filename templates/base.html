@@ -1,3 +1,4 @@
+{% load taggit_templatetags2_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -82,6 +83,70 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/about">About</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="stationsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Stations
+            </a>
+            <div class="dropdown-menu" aria-labelledby="stationsDropdown">
+              <a class="dropdown-item" href="/station/12TH/">12th St. Oakland City Center (12TH)</a>
+              <a class="dropdown-item" href="/station/16TH/">16th St. Mission (16TH)</a>
+              <a class="dropdown-item" href="/station/19TH/">19th St. Oakland (19TH)</a>
+              <a class="dropdown-item" href="/station/24TH/">24th St. Mission (24TH)</a>
+              <a class="dropdown-item" href="/station/ASHB/">Ashby (ASHB)</a>
+              <a class="dropdown-item" href="/station/BALB/">Balboa Park (BALB)</a>
+              <a class="dropdown-item" href="/station/BAYF/">Bay Fair (BAYF)</a>
+              <a class="dropdown-item" href="/station/CAST/">Castro Valley (CAST)</a>
+              <a class="dropdown-item" href="/station/CIVC/">Civic Center/UN Plaza (CIVC)</a>
+              <a class="dropdown-item" href="/station/COLS/">Coliseum (COLS)</a>
+              <a class="dropdown-item" href="/station/COLM/">Colma (COLM)</a>
+              <a class="dropdown-item" href="/station/CONC/">Concord (CONC)</a>
+              <a class="dropdown-item" href="/station/DALY/">Daly City (DALY)</a>
+              <a class="dropdown-item" href="/station/DBRK/">Downtown Berkeley (DBRK)</a>
+              <a class="dropdown-item" href="/station/DUBL/">Dublin/Pleasanton (DUBL)</a>
+              <a class="dropdown-item" href="/station/DELN/">El Cerrito del Norte (DELN)</a>
+              <a class="dropdown-item" href="/station/PLZA/">El Cerrito Plaza (PLZA)</a>
+              <a class="dropdown-item" href="/station/EMBR/">Embarcadero (EMBR)</a>
+              <a class="dropdown-item" href="/station/FRMT/">Fremont (FRMT)</a>
+              <a class="dropdown-item" href="/station/FTVL/">Fruitvale (FTVL)</a>
+              <a class="dropdown-item" href="/station/GLEN/">Glen Park (GLEN)</a>
+              <a class="dropdown-item" href="/station/HAYW/">Hayward (HAYW)</a>
+              <a class="dropdown-item" href="/station/LAFY/">Lafayette (LAFY)</a>
+              <a class="dropdown-item" href="/station/LAKE/">Lake Merritt (LAKE)</a>
+              <a class="dropdown-item" href="/station/MCAR/">MacArthur (MCAR)</a>
+              <a class="dropdown-item" href="/station/MLBR/">Millbrae (MLBR)</a>
+              <a class="dropdown-item" href="/station/MONT/">Montgomery St. (MONT)</a>
+              <a class="dropdown-item" href="/station/NBRK/">North Berkeley (NBRK)</a>
+              <a class="dropdown-item" href="/station/NCON/">North Concord/Martinez (NCON)</a>
+              <a class="dropdown-item" href="/station/OAKL/">Oakland International Airport (OAKL)</a>
+              <a class="dropdown-item" href="/station/ORIN/">Orinda (ORIN)</a>
+              <a class="dropdown-item" href="/station/PITT/">Pittsburg/Bay Point (PITT)</a>
+              <a class="dropdown-item" href="/station/PHIL/">Pleasant Hill/Contra Costa Centre (PHIL)</a>
+              <a class="dropdown-item" href="/station/POWL/">Powell St. (POWL)</a>
+              <a class="dropdown-item" href="/station/RICH/">Richmond (RICH)</a>
+              <a class="dropdown-item" href="/station/ROCK/">Rockridge (ROCK)</a>
+              <a class="dropdown-item" href="/station/SBRN/">San Bruno (SBRN)</a>
+              <a class="dropdown-item" href="/station/SFIA/">San Francisco International Airport (SFIA)</a>
+              <a class="dropdown-item" href="/station/SANL/">San Leandro (SANL)</a>
+              <a class="dropdown-item" href="/station/SHAY/">South Hayward (SHAY)</a>
+              <a class="dropdown-item" href="/station/SSAN/">South San Francisco (SSAN)</a>
+              <a class="dropdown-item" href="/station/UCTY/">Union City (UCTY)</a>
+              <a class="dropdown-item" href="/station/WCRK/">Walnut Creek (WCRK)</a>
+              <a class="dropdown-item" href="/station/WDUB/">West Dublin/Pleasanton (WDUB)</a>
+              <a class="dropdown-item" href="/station/WOAK/">West Oakland (WOAK)</a>
+              <a class="dropdown-item" href="/station/WARM/">Warm Springs / South Fremont (WARM)</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="tagsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Tags
+            </a>
+            <div class="dropdown-menu" aria-labelledby="tagsDropdown">
+              {% get_taglist as tags for 'reports.incident' %}
+              {% for tag in tags|slice:":20" %}
+              <a class="dropdown-item" href="/tag/{{ tag.slug }}/">{{ tag.name }} ({{tag.num_times}} incidents)</a>
+              {% endfor %}
+            </div>
           </li>
         </ul>
       </div>

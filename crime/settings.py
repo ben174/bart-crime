@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'taggit',
     'taggit_labels',
+    'taggit_templatetags2',
     'bootstrap_pagination',
     'reports',
 ]
