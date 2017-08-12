@@ -1,12 +1,15 @@
 {% extends 'base.html' %}
 {% block head %}
 <meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content="{{ incident.tweet_text }}" />
+<meta name="twitter:title" content="{{ incident }}" />
 <meta name="twitter:description" content="{{ incident.body }}" />
 <meta property="og:type" content="article" />
-<meta property="og:title" content="{{ incident.tweet_text }}" />
+<meta property="og:title" content="{{ incident }}" />
 <meta property="og:description" content="{{ incident.body }}" />
-<meta property="og:updated_time" content="{{ incident.updated_time }}" />
+<meta property="article:published_time" content="{{ incident.published_at|date:'c' }}" />
+{% for tag in incident.tags.all %}<meta property="article:tags" content="{{ tag.name }}" />
+{% endfor %}
+<meta property="og:updated_time" content="{{ incident.updated_at|date:'c' }}" />
 {% endblock %}
 {% block content %}
 <h3>{{ incident.title }}</h3>
@@ -29,7 +32,7 @@
 </div>
 {% for tag in incident.tags.all %}<span class="badge badge-pill badge-default">{{ tag.name }}</span>&nbsp;{% endfor %}<br />
 <div class="share-buttons">
-  <a href="https://twitter.com/share" class="twitter-share-button" data-text="{{ incident.tweet_text }}" data-url="{{ incident.get_url }}" data-via="bart_crimes" data-related="bart_crimes" data-show-count="false">Tweet</a>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-text="{{ incident }}" data-url="{{ incident.get_url }}" data-via="bart_crimes" data-related="bart_crimes" data-show-count="false">Tweet</a>
   <div class="fb-share-button" data-href="{{ incident.get_url }}" data-layout="button_count" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{ incident.get_url|urlencode }}&amp;src=sdkpreparse">Share</a></div>
 </div>
 {% for comment in incident.comment_set.all %}

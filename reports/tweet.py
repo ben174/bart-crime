@@ -2,6 +2,9 @@ import twitter
 
 from crime import settings
 
+class TwitterNotConfigured(Exception):
+    """Exception raised when Twitter is not configured."""
+    pass
 
 class Twitter:
     def __init__(self):
@@ -16,9 +19,8 @@ class Twitter:
         )
 
     def post_incident(self, incident):
-        body = '{} - {}\n----\n{}'.format(incident.title,
-                                          incident.station.name,
-                                          incident.get_url)
-        # short_desc = incident.title[:140-(len(body) - 5)]
-
-        self.api.PostUpdate(body)
+        print "Tweet text: {}".format(incident.tweet_text)
+        if self.api is not None:
+            self.api.PostUpdate(incident.tweet_text)
+        else:
+            raise TwitterNotConfigured()
