@@ -26,6 +26,8 @@ class Station(models.Model):
     state = models.CharField(max_length=100)
     zipcode = models.IntegerField()
 
+    incidents_count = 0
+
     def __unicode__(self):
         return "{} ({})".format(self.name, self.abbreviation)
 
