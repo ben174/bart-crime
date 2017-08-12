@@ -1,4 +1,4 @@
-<nav class="date-picker">
+<nav class="date-pagination">
   <div class="row">
     <div class="col">
       {% if prev_date %}
@@ -7,8 +7,8 @@
       </div>{% endif %}
     </div>
     <div class="col">
-      <div class="text-center">
-        <h3><b>{{ curr_date }}</b></h3>
+      <div class="text-center date-changer{% if top %} date-changer-top{% else %} date-changer-bottom{% endif %}">
+        <h3 title="Click to change date"><b>{{ curr_date }}</b></h3>
       </div>
     </div>
     <div class="col">

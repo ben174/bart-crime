@@ -6,5 +6,35 @@
     <a class="twitter-follow-button" data-show-count="false" href="https://twitter.com/bart_crimes">Follow @bart_crimes</a>
   </div>
 </div>
-<h2 class="text-center">Crime Reports for</h2>{% include "day_pagination.html" %}
+<h2 class="text-center">Crime Reports for</h2>{% include "day_pagination.html" with top=True %}
 {% include "day.html" %}{% include "day_pagination.html" %} {% endblock %}
+{% block before_body_close %}
+<script type="text/javascript">
+  var valid_dates = {{ valid_dates|safe }};
+  function fmtDate(date){
+    return date.getFullYear() + '-' + ('0' + (date.getMonth()+1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
+  }
+  $('.date-changer').popover({
+    placement: 'auto',
+    content: '<div class="datepicker" data-date="{{ curr_date }}"></div>',
+    html: true,
+  }).on('shown.bs.popover', function () {
+    $('.datepicker').datepicker({
+      todayBtn: 'linked',
+      todayHighlight: true,
+      beforeShowDay: function(checkDate){
+        return valid_dates.indexOf(fmtDate(checkDate)) > -1;
+      }
+    }).
+      on('changeDate', function(e){
+        window.location = '/date/'+fmtDate(e.date);
+      });
+    $('.date-changer').popover('update');
+    $('body').one('click', function (e) {
+      if (!$(e.target).hasClass('datepicker') || !$(e.target).hasClass('date-changer')) {
+        $('.date-changer').popover('hide');
+      }
+    });
+  });
+</script>
+{% endblock %}
