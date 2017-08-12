@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^date/(?P<year>[0-9]{4})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2})/', views.date),
     url(r'^station/(?P<station_id>[\w]+)/', views.station, name='station'),
     url(r'^tag/(?P<slug>[\w-]+)', views.tag),
+    url(r'^scrape/', views.do_scrape_atom),
     url(r'^scrape/atom/', views.do_scrape_atom),
     url(r'^$', views.home),
     url(r'^api/v0/', include(router.urls)),
