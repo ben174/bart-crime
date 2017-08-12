@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,12 +21,18 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', '_0p#t+%5l+x@qnxrsm_763z4&)-kbeads(_!x3^^ebkjbb7jtb')
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY', '_0p#t+%5l+x@qnxrsm_763z4&)-kbeads(_!x3^^ebkjbb7jtb')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['www.bartcrimes.com', 'bartcrimes.com', '127.0.0.1', 'bart-crime.herokuapp.com', 'bartcrimes.ngrok.io']
+ALLOWED_HOSTS = [
+    'www.bartcrimes.com',
+    'bartcrimes.com',
+    '127.0.0.1',
+    'bart-crime.herokuapp.com',
+    'bartcrimes.ngrok.io']
 
 
 # Application definition
@@ -88,9 +95,7 @@ DATABASES = {
     }
 }
 
-import dj_database_url
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
+DATABASES['default'].update(dj_database_url.config(conn_max_age=500))
 
 
 # Password validation
@@ -156,16 +161,16 @@ BOOTSTRAP_VERSION = 4
 USE_ENV_FOR_SECRETS = True
 
 try:
-    import secrets
+    import crime.secrets
     DEBUG = True
     USE_ENV_FOR_SECRETS = False
     SECURE_SSL_REDIRECT = False
 except ImportError:
     # must be prod, do prod stuff here
     SECURE_SSL_REDIRECT = True
-    pass
+
 
 def get_secret(secret):
     if not USE_ENV_FOR_SECRETS:
-        return getattr(secrets, secret)
+        return getattr(crime.secrets, secret)
     return os.environ[secret]

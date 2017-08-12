@@ -17,7 +17,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Incident',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True,
+                                        serialize=False, verbose_name='ID')),
                 ('incident_dt', models.DateTimeField()),
                 ('location', models.CharField(max_length=255)),
                 ('case', models.CharField(max_length=50)),
@@ -28,7 +29,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Report',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True,
+                                        serialize=False, verbose_name='ID')),
                 ('report_dt', models.DateTimeField(auto_now_add=True)),
                 ('body', models.TextField()),
             ],
@@ -36,18 +38,23 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Station',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True,
+                                        serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=100)),
             ],
         ),
         migrations.AddField(
             model_name='incident',
             name='report',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='reports.Report'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to='reports.Report'),
         ),
         migrations.AddField(
             model_name='incident',
             name='station',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='reports.Station'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to='reports.Station'),
         ),
     ]

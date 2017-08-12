@@ -18,11 +18,27 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Comment',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_dt', models.DateTimeField(auto_now_add=True)),
-                ('text', models.TextField()),
-                ('incident', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='reports.Incident')),
-                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('created_dt',
+                 models.DateTimeField(
+                     auto_now_add=True)),
+                ('text',
+                 models.TextField()),
+                ('incident',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     to='reports.Incident')),
+                ('user',
+                 models.ForeignKey(
+                     blank=True,
+                     null=True,
+                     on_delete=django.db.models.deletion.CASCADE,
+                     to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]
