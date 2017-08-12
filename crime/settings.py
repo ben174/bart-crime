@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'taggit',
     'taggit_labels',
+    'taggit_templatetags2',
+    'bootstrap_pagination',
     'reports',
 ]
 
@@ -74,6 +76,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'reports.context_processors.station_list',
             ],
         },
     },
@@ -152,6 +155,8 @@ STATICFILES_DIRS = (
 )
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+BOOTSTRAP_VERSION = 4
 
 USE_ENV_FOR_SECRETS = True
 

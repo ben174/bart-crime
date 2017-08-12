@@ -1,47 +1,40 @@
-{% extends 'base.html' %}
-{% block content %}
-<h2 class="text-center">Crime Reports for </h2>
-<h3 class="display-4 text-center"><b>{{ curr_date }}</b></h3>
-<nav>
-<ul class="pagination">
-  {% if prev_date %}
-  <li class="page-item"><a class="page-link" href="/date/{{ prev_date|date:"Y-m-d" }}">Previous Date</a></li>
-  {% endif %}
-  {% if next_date %}
-  <li class="page-item"><a class="page-link" href="/date/{{ next_date|date:"Y-m-d" }}">Next Date</a></li>
-  {% endif %}
-</ul>
-</nav>
-
-<div class="alert alert-info" role="alert">
-    <p>This site is about <b>Making Public Information Public</b>.
-      BART has been a little strange about sharing public information lately. This site is here
-      to make it easier to access that information. <a href="/about">Read more here.</a></p>
-    <p>Your <a href="/about">donations</a> help keep the site alive, and allow me to add new features, such as search
-      and station map.</p>
-    <p><i class="fa fa-twitter" aria-hidden="true"></i>
-      Follow <a href="https://twitter.com/bart_crimes">@bart_crimes</a> on Twitter to receive each
-      incident in your feed.</p>
+{% extends 'base.html' %} {% block content %}
+<div class="alert alert-primary" role="alert">
+  <p>This site is about <b>Making Public Information Public</b>. BART has been a little strange about sharing public information lately. This site is here to make it easier to access that information. <a href="/about">Read more here.</a></p>
+  <p>Your <a href="/about">donations</a> help keep the site alive, and allow me to add new features, such as search and station map.</p>
+  <div class="text-center">
+    <a class="twitter-follow-button" data-show-count="false" href="https://twitter.com/bart_crimes">Follow @bart_crimes</a>
+  </div>
 </div>
-<script>
-$(window).scroll(function() {
-	if (checkVisible($('#morelink')[0])) {
-
-    }
-});
-
-function checkVisible(elm) {
-  var rect = elm.getBoundingClientRect();
-  var viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
-  return !(rect.bottom < 0 || rect.top - viewHeight >= 0);
-}
+<h2 class="text-center">Crime Reports for</h2>{% include "day_pagination.html" with top=True %}
+{% include "day.html" %}{% include "day_pagination.html" %} {% endblock %}
+{% block before_body_close %}
+<script type="text/javascript">
+  var valid_dates = {{ valid_dates|safe }};
+  function fmtDate(date){
+    return date.getFullYear() + '-' + ('0' + (date.getMonth()+1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
+  }
+  $('.date-changer').popover({
+    placement: 'auto',
+    content: '<div class="datepicker" data-date="{{ curr_date }}"></div>',
+    html: true,
+  }).on('shown.bs.popover', function () {
+    $('.datepicker').datepicker({
+      todayBtn: 'linked',
+      todayHighlight: true,
+      beforeShowDay: function(checkDate){
+        return valid_dates.indexOf(fmtDate(checkDate)) > -1;
+      }
+    }).
+      on('changeDate', function(e){
+        window.location = '/date/'+fmtDate(e.date);
+      });
+    $('.date-changer').popover('update');
+    $('body').one('click', function (e) {
+      if (!$(e.target).hasClass('datepicker') || !$(e.target).hasClass('date-changer')) {
+        $('.date-changer').popover('hide');
+      }
+    });
+  });
 </script>
-
-<div id="mainshit">
-{% include "day.html" %}
-</div>
-{% if prev_date %}
-  <a class="btn btn-outline-primary" href="/date/{{ prev_date|date:"Y-m-d" }}" id="morelink">More</a>
-{% endif %}
-
 {% endblock %}

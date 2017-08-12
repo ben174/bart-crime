@@ -24,6 +24,8 @@ class Station(models.Model):
     state = models.CharField(max_length=100)
     zipcode = models.IntegerField()
 
+    incidents_count = 0
+
     def __unicode__(self):
         return "{} ({})".format(self.name, self.abbreviation)
 
@@ -161,6 +163,29 @@ class Incident(models.Model):
 
     def __unicode__(self):
         return self.title
+
+    @property
+    def hover_date(self):
+        rfc_5322_fmt = '%a, %d %b %Y %H:%M:%S %z'
+        tz = pytz.timezone('America/Los_Angeles')
+        incident_dt = self.incident_dt.astimezone(tz).strftime(rfc_5322_fmt)
+        published_at = self.published_at.astimezone(tz).strftime(rfc_5322_fmt)
+        updated_at = self.updated_at.astimezone(tz).strftime(rfc_5322_fmt)
+        if incident_dt != published_at:
+            if published_at != updated_at:
+                fmt_str = ("Incident occurred at: {}\n"
+                           "Incident was published at: {}\n"
+                           "Incident was updated at: {}")
+                return fmt_str.format(incident_dt, published_at, updated_at)
+            fmt_str = "Incident occurred at: {}\nIncident was published at: {}"
+            return fmt_str.format(incident_dt, published_at)
+        if published_at != updated_at:
+            fmt_str = ("Incident was published at: {}\n"
+                       "Incident was updated at: {}"
+                       "(occurance date not parsed)")
+            return fmt_str.format(published_at, updated_at)
+        failure = "Incident was published at {} (occurance date not parsed)"
+        return failure.format(published_at)
 
 
 @receiver(pre_save, sender=Incident)
