@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import datetime
+import json
 
 from rest_framework import viewsets
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from django.core.serializers.json import DjangoJSONEncoder
+
+from taggit.models import Tag
 
 from crime import settings
 from reports.models import Incident, Comment, Station
@@ -33,6 +38,10 @@ def date(request, year, month, day):
     return listing(request, date)
 
 def listing(request, date):
+    valid_dates = list()
+    for dateobj in Incident.objects.values('incident_date').distinct():
+        valid_dates.append(dateobj['incident_date'].strftime('%Y-%m-%d'))
+    valid_dates = json.dumps(valid_dates)
     tomorrow = datetime.datetime.now() + datetime.timedelta(days=1)
     curr_date = Incident.objects.filter(
         incident_date__lte=date,
@@ -59,6 +68,7 @@ def listing(request, date):
         'incidents': incidents,
         'prev_date': prev_date,
         'next_date': next_date,
+        'valid_dates': valid_dates,
     })
 
 def incident(request, incident_id):
@@ -70,7 +80,41 @@ def incident(request, incident_id):
 
 def station(request, station_id):
     station = get_object_or_404(Station, abbreviation=station_id)
-    return render(request, 'station.html', {'station': station})
+    incidents = Incident.objects.filter(
+        station__id=station.id,
+    ).order_by('-incident_dt')
+    incidents_count = len(incidents)
+    paginator = Paginator(incidents, 25)
+
+    page = request.GET.get('page')
+    try:
+        incidents = paginator.page(page)
+    except PageNotAnInteger:
+        incidents = paginator.page(1)
+    except EmptyPage:
+        incidents = paginator.page(paginator.num_pages)
+
+    return render(request, 'station.html', {'station': station,
+                  'incidents': incidents, 'incidents_count': incidents_count})
+
+def tag(request, slug):
+    tag = get_object_or_404(Tag, slug=slug)
+    incidents = Incident.objects.filter(
+        tags__id=tag.id,
+    ).order_by('-incident_dt')
+    incidents_count = len(incidents)
+    paginator = Paginator(incidents, 25)
+
+    page = request.GET.get('page')
+    try:
+        incidents = paginator.page(page)
+    except PageNotAnInteger:
+        incidents = paginator.page(1)
+    except EmptyPage:
+        incidents = paginator.page(paginator.num_pages)
+
+    return render(request, 'tag.html', {'tag': tag, 'incidents': incidents,
+                  'incidents_count': incidents_count})
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
