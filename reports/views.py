@@ -102,6 +102,7 @@ def view_station(request, station_id):
     return render(request, 'station.html', {'station': station,
                   'incidents': incidents, 'incidents_count': incidents_count})
 
+
 def tag(request, slug):
     tag = get_object_or_404(Tag, slug=slug)
     incidents = Incident.objects.filter(
