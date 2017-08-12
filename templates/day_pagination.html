@@ -2,16 +2,20 @@
   <div class="row">
     <div class="col">
       {% if prev_date %}
-      <div class="text-left"><a href="/date/{{ prev_date|date:"Y-m-d" }}" class="btn btn-outline-primary" role="button">&larr; {{ prev_date|date:"l, F, jS" }}</a></div>
-      {% endif %}
+      <div class="text-left">
+        <a class="btn btn-outline-primary" href="/date/{{ prev_date|date:'Y-m-d' }}" role="button">&larr; {{ prev_date|date:"l, F, jS" }}</a>
+      </div>{% endif %}
     </div>
     <div class="col">
-      <div class="text-center"><h3><b>{{ curr_date }}</b></h3></div>
+      <div class="text-center">
+        <h3><b>{{ curr_date }}</b></h3>
+      </div>
     </div>
     <div class="col">
       {% if next_date %}
-      <div class="text-right"><a href="/date/{{ next_date|date:"Y-m-d" }}" class="btn btn-outline-primary" role="button">{{ next_date|date:"l, F, jS" }} &rarr;</a></div>
-      {% endif %}
+      <div class="text-right">
+        <a class="btn btn-outline-primary" href="/date/{{ next_date|date:'Y-m-d' }}" role="button">{{ next_date|date:"l, F, jS" }} &rarr;</a>
+      </div>{% endif %}
     </div>
   </div>
 </nav>
