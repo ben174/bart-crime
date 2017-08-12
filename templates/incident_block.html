@@ -3,7 +3,7 @@
   <div class="card card bg-light">
     <h3 class="card-header"><a class="incident-title" href="/incident/{{ incident.id }}">{% if incident.icon %}<i aria-hidden="true" class="fa fa-{{ incident.icon }}"></i>&nbsp;{% endif %}{{ incident.title }}</a></h3>
     <div class="card-body">
-      <h6 class="card-subtitle mb-2 text-muted">{% if incident.station %} <b><a href="/station/{{ incident.station.abbreviation }}">{{ incident.station.name }}</a></b> - {% elif incident.location %} <b>{{ incident.location }}</b> - {% endif %} <span title="{{ incident.incident_dt }}">{{ incident.incident_dt|date:"g:i A" }}</span> {% if incident.case %} - Case: {{ incident.case }} {% endif %}</h6>
+      <h6 class="card-subtitle mb-2 text-muted">{% if incident.station %} <b><a href="/station/{{ incident.station.abbreviation }}">{{ incident.station.name }}</a></b> - {% elif incident.location %} <b>{{ incident.location }}</b> - {% endif %} <span class="dotted-date" title="{{ incident.incident_dt|date:'r' }}">{{ incident.incident_dt|date:"g:i A" }}</span> {% if incident.case %} - Case: {{ incident.case }} {% endif %}</h6>
       <p class="card-text">{{ incident.body }}</p>
       <div class="col-xs-6">
         <i aria-hidden="true" class="fa fa-{{ incident.arrested|yesno:'check,times' }}"></i> Arrest<br>
@@ -19,6 +19,9 @@
       <div class="incident-actions">
         <a class="card-link" href="/incident/{{ incident.id }}">{% if incident.comment_set.all|length > 0 %}{{ incident.comment_set.all|length }} comment(s){% else %}add a comment{% endif %}</a>
       </div>
+    </div>
+    <div class="card-footer text-muted">
+      <span class="dotted-date" title="{{ incident.incident_dt|date:'r' }}">{{ incident.incident_dt|naturaltime }}</span>
     </div>
   </div>
 </div>
