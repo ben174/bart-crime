@@ -18,6 +18,9 @@
       </div>
       <div class="incident-actions">
         <a class="card-link" href="/incident/{{ incident.id }}">{% if incident.comment_set.all|length > 0 %}{{ incident.comment_set.all|length }} comment(s){% else %}add a comment{% endif %}</a>
+        {% if user.is_superuser %}
+        <a class="card-link" href="{% url 'admin:reports_incident_change' incident.id %}">edit in admin</a>
+        {% endif %}
       </div>
     </div>
     <div class="card-footer text-muted">
