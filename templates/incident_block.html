@@ -1,7 +1,7 @@
 {% load humanize %}
 <div class="col-sm-6">
-  <div class="card" style="background-color: #f6fbfd; min-height: 300px; margin-bottom: 10px;">
-    <h3 class="card-header" style="background-color: #c2deec">
+  <div class="card">
+    <h3 class="card-header">
       <a href="/incident/{{ incident.id }}" class="incidentTitle"><i class="fa fa-{{ incident.icon }}" aria-hidden="true"></i>
       {{ incident.title }}</a>
     </h3>
@@ -33,7 +33,7 @@
         <a href="/incident/{{ incident.id }}" class="card-link">permalink</a>
       </div>
     </div>
-    <div class="card-footer text-muted" style="background-color: #e6f6ff">
+    <div class="card-footer text-muted">
       {{ incident.incident_dt|naturaltime }}
     </div>
   </div>
