@@ -6,9 +6,12 @@ import json
 from rest_framework import viewsets
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.core.serializers.json import DjangoJSONEncoder
+
+from taggit.models import Tag
 
 from crime import settings
 from reports.models import Incident, Comment, Station
@@ -77,7 +80,41 @@ def incident(request, incident_id):
 
 def station(request, station_id):
     station = get_object_or_404(Station, abbreviation=station_id)
-    return render(request, 'station.html', {'station': station})
+    incidents = Incident.objects.filter(
+        station__id=station.id,
+    ).order_by('-incident_dt')
+    incidents_count = len(incidents)
+    paginator = Paginator(incidents, 25)
+
+    page = request.GET.get('page')
+    try:
+        incidents = paginator.page(page)
+    except PageNotAnInteger:
+        incidents = paginator.page(1)
+    except EmptyPage:
+        incidents = paginator.page(paginator.num_pages)
+
+    return render(request, 'station.html', {'station': station,
+                  'incidents': incidents, 'incidents_count': incidents_count})
+
+def tag(request, slug):
+    tag = get_object_or_404(Tag, slug=slug)
+    incidents = Incident.objects.filter(
+        tags__id=tag.id,
+    ).order_by('-incident_dt')
+    incidents_count = len(incidents)
+    paginator = Paginator(incidents, 25)
+
+    page = request.GET.get('page')
+    try:
+        incidents = paginator.page(page)
+    except PageNotAnInteger:
+        incidents = paginator.page(1)
+    except EmptyPage:
+        incidents = paginator.page(paginator.num_pages)
+
+    return render(request, 'tag.html', {'tag': tag, 'incidents': incidents,
+                  'incidents_count': incidents_count})
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'taggit',
     'taggit_labels',
+    'bootstrap_pagination',
     'reports',
 ]
 
@@ -147,6 +148,8 @@ STATICFILES_DIRS = (
 )
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+BOOTSTRAP_VERSION = 4
 
 USE_ENV_FOR_SECRETS = True
 

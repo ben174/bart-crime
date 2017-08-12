@@ -9,7 +9,7 @@
         <i aria-hidden="true" class="fa fa-{{ incident.arrested|yesno:'check,times' }}"></i> Arrest<br>
         <i aria-hidden="true" class="fa fa-{{ incident.prohibition_order|yesno:'check,times' }}"></i> Prohibition order<br>
         <i aria-hidden="true" class="fa fa-{{ incident.warrant|yesno:'check,times' }}"></i> Warrant related<br>
-      </div>{% for tag in incident.tags.all %}<span class="badge badge-pill badge-secondary">{{ tag.name }}</span>&nbsp;{% endfor %}<br>
+      </div>{% for tag in incident.tags.all %}<a href="/tag/{{ tag.slug }}" class="badge badge-pill badge-secondary">{{ tag.name }}</a>&nbsp;{% endfor %}<br>
       <div class="share-buttons">
         <a class="twitter-share-button" data-related="bart_crimes" data-show-count="false" data-text="{{ incident.tweet_text }}" data-url="{{ incident.get_url }}" data-via="bart_crimes" href="https://twitter.com/share">Tweet</a>&nbsp;
         <div class="fb-share-button" data-href="{{ incident.get_url }}" data-layout="button_count" data-mobile-iframe="true" data-size="small">
@@ -19,9 +19,6 @@
       <div class="incident-actions">
         <a class="card-link" href="/incident/{{ incident.id }}">{% if incident.comment_set.all|length > 0 %}{{ incident.comment_set.all|length }} comment(s){% else %}add a comment{% endif %}</a>
       </div>
-    </div>
-    <div class="card-footer text-muted">
-      {{ incident.incident_dt|naturaltime }}
     </div>
   </div>
 </div>
