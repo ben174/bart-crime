@@ -1,18 +1,5 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2 class="text-center">Crime Reports for </h2>
-<h3 class="display-4 text-center"><b>{{ curr_date }}</b></h3>
-<nav>
-<ul class="pagination">
-  {% if prev_date %}
-  <li class="page-item"><a class="page-link" href="/date/{{ prev_date|date:"Y-m-d" }}">Previous Date</a></li>
-  {% endif %}
-  {% if next_date %}
-  <li class="page-item"><a class="page-link" href="/date/{{ next_date|date:"Y-m-d" }}">Next Date</a></li>
-  {% endif %}
-</ul>
-</nav>
-
 <div class="alert alert-primary" role="alert">
     <p>This site is about <b>Making Public Information Public</b>.
       BART has been a little strange about sharing public information lately. This site is here
@@ -23,25 +10,13 @@
       Follow <a href="https://twitter.com/bart_crimes">@bart_crimes</a> on Twitter to receive each
       incident in your feed.</p>
 </div>
-<script>
-$(window).scroll(function() {
-	if (checkVisible($('#morelink')[0])) {
 
-    }
-});
-
-function checkVisible(elm) {
-  var rect = elm.getBoundingClientRect();
-  var viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
-  return !(rect.bottom < 0 || rect.top - viewHeight >= 0);
-}
-</script>
+<h2 class="text-center">Crime Reports for </h2>
+{% include "day_pagination.html" %}
 
 <div id="mainshit">
 {% include "day.html" %}
 </div>
-{% if prev_date %}
-  <a class="btn btn-outline-primary" href="/date/{{ prev_date|date:"Y-m-d" }}" id="morelink">More</a>
-{% endif %}
+{% include "day_pagination.html" %}
 
 {% endblock %}
