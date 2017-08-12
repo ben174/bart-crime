@@ -3,7 +3,7 @@
     <div class="col">
       {% if prev_date %}
       <div class="text-left">
-        <a class="btn btn-outline-primary" href="/date/{{ prev_date|date:'Y-m-d' }}" role="button">&larr; {{ prev_date|date:"l, F, jS" }}</a>
+        <a class="btn btn-outline-primary" href="/date/{{ prev_date|date:'Y-m-d' }}" role="button">&larr; <span class="d-none d-sm-inline">{{ prev_date|date:"l, F jS" }}</span></a>
       </div>{% endif %}
     </div>
     <div class="col">
@@ -14,7 +14,7 @@
     <div class="col">
       {% if next_date %}
       <div class="text-right">
-        <a class="btn btn-outline-primary" href="/date/{{ next_date|date:'Y-m-d' }}" role="button">{{ next_date|date:"l, F, jS" }} &rarr;</a>
+        <a class="btn btn-outline-primary" href="/date/{{ next_date|date:'Y-m-d' }}" role="button"><span class="d-none d-sm-inline">{{ next_date|date:"l, F jS" }}</span> &rarr;</a>
       </div>{% endif %}
     </div>
   </div>
