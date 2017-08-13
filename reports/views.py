@@ -15,7 +15,8 @@ from crime import settings
 from reports.models import Incident, Comment, Station
 from reports import atom_scraper
 from reports.serializers import (UserSerializer, StationSerializer,
-                                 IncidentSerializer, CommentSerializer)
+                                 IncidentSerializer, CommentSerializer,
+                                 TagSerializer)
 
 
 def do_scrape_atom(request):
@@ -153,3 +154,11 @@ class CommentViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = Comment.objects.all().order_by('-created_dt')
     serializer_class = CommentSerializer
+
+
+class TagViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint that allows tags to be viewed
+    """
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer

@@ -1,6 +1,9 @@
 from django.contrib.auth.models import User
 from reports.models import Incident, Comment, Station
 from rest_framework import serializers
+from taggit.models import Tag
+from taggit_serializer.serializers import (TagListSerializerField,
+                                           TaggitSerializer)
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -23,6 +26,7 @@ class StationSerializer(serializers.HyperlinkedModelSerializer):
 
 class IncidentSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.ReadOnlyField()  # pylint: disable=invalid-name
+    tags = TagListSerializerField()
 
     class Meta:
         model = Incident
@@ -34,4 +38,12 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Comment
+        fields = ('__all__')
+
+
+class TagSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.ReadOnlyField()  # pylint: disable=invalid-name
+
+    class Meta:
+        model = Tag
         fields = ('__all__')

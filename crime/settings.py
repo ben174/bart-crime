@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'taggit',
     'taggit_labels',
     'taggit_templatetags2',
+    'taggit_serializer',
     'bootstrap_pagination',
     'reports',
 ]

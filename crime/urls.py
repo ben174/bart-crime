@@ -25,6 +25,7 @@ API.register(r'users', views.UserViewSet)
 API.register(r'stations', views.StationViewSet)
 API.register(r'incidents', views.IncidentViewSet)
 API.register(r'comments', views.CommentViewSet)
+API.register(r'tags', views.TagViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
