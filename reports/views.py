@@ -8,8 +8,6 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
-from django.views.decorators.csrf import csrf_exempt
-from django.core.serializers.json import DjangoJSONEncoder
 
 from taggit.models import Tag
 
@@ -99,11 +97,12 @@ def view_station(request, station_id):
     except EmptyPage:
         incidents = paginator.page(paginator.num_pages)
 
-    return render(request, 'station.html', {'station': station,
-                  'incidents': incidents, 'incidents_count': incidents_count})
+    return render(request, 'station.html', {'incidents_count': incidents_count,
+                                            'station': station,
+                                            'incidents': incidents})
 
 
-def tag(request, slug):
+def incidents_for_tag(request, slug):
     tag = get_object_or_404(Tag, slug=slug)
     incidents = Incident.objects.filter(
         tags__id=tag.id,
@@ -120,7 +119,7 @@ def tag(request, slug):
         incidents = paginator.page(paginator.num_pages)
 
     return render(request, 'tag.html', {'tag': tag, 'incidents': incidents,
-                  'incidents_count': incidents_count})
+                                        'incidents_count': incidents_count})
 
 
 # pylint: disable=too-many-ancestors
