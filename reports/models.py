@@ -11,7 +11,9 @@ from taggit.managers import TaggableManager
 
 from twitter import TwitterError
 
-from reports.tweet import Twitter
+from reports.tweet import Twitter, TwitterNotConfigured
+
+HUMAN_TIME = '%a, %b %d %Y %I:%M %p'
 
 
 class Station(models.Model):
@@ -73,6 +75,35 @@ class Incident(models.Model):
 
     twitter = None
 
+    def __unicode__(self):
+        location = self.location
+        if self.station is not None:
+            location = self.station
+        return "{} @ {} - {}".format(self.title, location,
+                                     self.incident_dt.strftime(HUMAN_TIME))
+
+    @property
+    def tweet_text(self):
+        location = self.location
+        if self.station is not None:
+            location = str(self.station.name)
+
+        incident_date = self.incident_dt.strftime(HUMAN_TIME)
+
+        base_text = "{} at {} - {}".format(self.title, location, incident_date)
+        if len(base_text) > 120:  # Max tweet length is 140 - 20 for URL
+            if len(base_text) - (len(location) - 6) <= 120:
+                # If we have station, use abbr instead of name
+                if self.station is not None:
+                    abbr = self.station.abbreviation
+                    base_text = "{} at ({}) - {}".format(self.title, abbr,
+                                                         incident_date)
+                # If no station, remove date
+                else:
+                    base_text = "{} at ({})".format(self.title, abbr)
+
+        return base_text
+
     @property
     def get_url(self):
         return '{}/incident/{}'.format('https://www.bartcrimes.com', self.pk)
@@ -85,16 +116,14 @@ class Incident(models.Model):
         if not Incident.twitter:
             Incident.twitter = Twitter()
             Incident.twitter.connect()
-        Incident.twitter.post_incident(self)
+        try:
+            Incident.twitter.post_incident(self)
+        except TwitterNotConfigured:
+            print "Twitter not configured, not attempting to tweet"
+            return
+
         self.tweeted = True
         self.save()
-
-    @property
-    def tweet_text(self):
-        location = self.location
-        if self.station is not None:
-            location = self.station.abbreviation
-        return '{} @ {}'.format(self.title, location)
 
     @property
     def station_best_guess(self):
@@ -162,8 +191,6 @@ class Incident(models.Model):
             icon = 'medkit'
         return icon
 
-    def __unicode__(self):
-        return self.title
 
     @property
     def hover_date(self):
@@ -215,6 +242,7 @@ def fill_data(sender, instance, **kwargs):  # pylint: disable=unused-argument
     instance.warrant = ('warrant' in body or
                         'warrant' in title)
 
+
 @receiver(post_save, sender=Incident)
 # pylint: disable=unused-argument
 def tweet_incident(sender, instance, **kwargs):
@@ -222,7 +250,6 @@ def tweet_incident(sender, instance, **kwargs):
         instance.tweet()
     except TwitterError as exc:
         print 'Exception while tweeting incident: {}'.format(str(exc))
-
 
 
 class Comment(models.Model):

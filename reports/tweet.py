@@ -1,10 +1,11 @@
-from urllib2 import urlopen
-
 import twitter
 
 from crime import settings
 
-TINYURL_API_FMT = 'http://tinyurl.com/api-create.php?url={}'
+
+class TwitterNotConfigured(Exception):
+    """Exception raised when Twitter is not configured."""
+    pass
 
 
 class Twitter(object):
@@ -21,9 +22,9 @@ class Twitter(object):
         )
 
     def post_incident(self, incident):
-        body = '{} - {}\n----\n{}'.format(incident.title,
-                                          incident.station.name,
-                                          incident.get_url)
-        # short_desc = incident.title[:140-(len(body) - 5)]
-
-        self.api.PostUpdate(body)
+        tweet_text = "{} {}".format(incident.tweet_text, incident.get_url)
+        print "Tweet text: {}".format(tweet_text)
+        if self.api is not None:
+            self.api.PostUpdate(tweet_text)
+        else:
+            raise TwitterNotConfigured()

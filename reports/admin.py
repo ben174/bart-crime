@@ -25,7 +25,8 @@ class IncidentAdmin(admin.ModelAdmin):
     search_fields = ('title', 'case', 'bpd_id')
     ordering = ('-published_at',)
 
-    readonly_fields = ('parsed_location', 'parsed_time', 'parsed_case')
+    readonly_fields = ('parsed_location', 'parsed_time',
+                       'parsed_case', 'tweet_text')
 
     def get_queryset(self, request):
         return super(IncidentAdmin, self).get_queryset(

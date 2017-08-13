@@ -139,6 +139,8 @@ def scrape(local=False, skip_existing=True,
                 if title.isupper():
                     title = title.title()
 
+                title = title.strip()
+
                 if location is not None and location.isupper():
                     location = location.title()
 
