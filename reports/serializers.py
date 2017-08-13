@@ -41,7 +41,7 @@ class CommentSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('__all__')
 
 
-class TagSerializer(serializers.HyperlinkedModelSerializer):
+class TagSerializer(TaggitSerializer, serializers.HyperlinkedModelSerializer):
     id = serializers.ReadOnlyField()  # pylint: disable=invalid-name
 
     class Meta:
