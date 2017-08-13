@@ -35,7 +35,7 @@ urlpatterns = [
         views.incidents_for_date),
     url(r'^station/(?P<station_id>[\w]+)/', views.view_station,
         name='station'),
-    url(r'^tag/(?P<slug>[\w-]+)', views.tag),
+    url(r'^tag/(?P<slug>[\w-]+)', views.incidents_for_tag),
     url(r'^scrape/', views.do_scrape_atom),
     url(r'^scrape/atom/', views.do_scrape_atom),
     url(r'^$', views.home),

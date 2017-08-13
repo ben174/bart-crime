@@ -191,14 +191,13 @@ class Incident(models.Model):
             icon = 'medkit'
         return icon
 
-
     @property
     def hover_date(self):
-        rfc_5322_fmt = '%a, %d %b %Y %H:%M:%S %z'
-        tz = pytz.timezone('America/Los_Angeles')
-        incident_dt = self.incident_dt.astimezone(tz).strftime(rfc_5322_fmt)
-        published_at = self.published_at.astimezone(tz).strftime(rfc_5322_fmt)
-        updated_at = self.updated_at.astimezone(tz).strftime(rfc_5322_fmt)
+        rfc5322 = '%a, %d %b %Y %H:%M:%S %z'
+        la_tz = pytz.timezone('America/Los_Angeles')
+        incident_dt = self.incident_dt.astimezone(la_tz).strftime(rfc5322)
+        published_at = self.published_at.astimezone(la_tz).strftime(rfc5322)
+        updated_at = self.updated_at.astimezone(la_tz).strftime(rfc5322)
         if incident_dt != published_at:
             if published_at != updated_at:
                 fmt_str = ("Incident occurred at: {}\n"
