@@ -20,19 +20,24 @@ from reports import views
 
 from rest_framework import routers
 
-router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'stations', views.StationViewSet)
-router.register(r'incidents', views.IncidentViewSet)
-router.register(r'comments', views.CommentViewSet)
+API = routers.DefaultRouter()
+API.register(r'users', views.UserViewSet)
+API.register(r'stations', views.StationViewSet)
+API.register(r'incidents', views.IncidentViewSet)
+API.register(r'comments', views.CommentViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^about/', views.about),
-    url(r'^incident/(?P<incident_id>[0-9]+)/', views.incident, name='incident'),
-    url(r'^date/(?P<year>[0-9]{4})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2})/', views.date),
-    url(r'^station/(?P<station_id>[\w]+)/', views.station, name='station'),
+    url(r'^incident/(?P<incident_id>[0-9]+)/',
+        views.single_incident, name='incident'),
+    url(r'^date/(?P<year>[0-9]{4})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2})/',
+        views.incidents_for_date),
+    url(r'^station/(?P<station_id>[\w]+)/', views.view_station,
+        name='station'),
+    url(r'^tag/(?P<slug>[\w-]+)', views.tag),
+    url(r'^scrape/', views.do_scrape_atom),
     url(r'^scrape/atom/', views.do_scrape_atom),
     url(r'^$', views.home),
-    url(r'^api/v0/', include(router.urls)),
+    url(r'^api/v0/', include(API.urls)),
 ]

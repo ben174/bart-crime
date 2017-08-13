@@ -2,7 +2,7 @@
 {% load bootstrap_pagination %}
 {% load humanize %}
 {% block content %}
-<h3>{{ incidents_count|intcomma }} total incidents logged at {{ station.name }}</h3>
+<h3>{{ incidents_count|intcomma }} total incidents tagged with {{ tag.name }}</h3>
 <div class="row equal">
 {% for incident in incidents %}
   {% include "incident_block.html" %}

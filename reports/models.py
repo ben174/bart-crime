@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import datetime
-import re
 import difflib
+import pytz
 
-from bs4 import BeautifulSoup
 from django.contrib.auth.models import User
 from django.db import models
-import pytz
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from taggit.managers import TaggableManager
+
+from twitter import TwitterError
 
 from reports.tweet import Twitter, TwitterNotConfigured
 
@@ -27,6 +26,8 @@ class Station(models.Model):
     county = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
     zipcode = models.IntegerField()
+
+    incidents_count = 0
 
     def __unicode__(self):
         return "{} ({})".format(self.name, self.abbreviation)
@@ -101,7 +102,7 @@ class Incident(models.Model):
                 else:
                     base_text = "{} at ({})".format(self.title, abbr)
 
-        return "{} {}".format(base_text, self.get_url)
+        return base_text
 
     @property
     def get_url(self):
@@ -135,60 +136,88 @@ class Incident(models.Model):
         if answer:
             return Station.objects.get(name=answer[0])
         else:
+            fixed_station = None
             if '12th' in cleaned_location.lower():
-                return Station.objects.get(abbreviation='12TH')
-            if '16th' in cleaned_location.lower():
-                return Station.objects.get(abbreviation='16TH')
-            if '19th' in cleaned_location.lower():
-                return Station.objects.get(abbreviation='19TH')
-            if '24th' in cleaned_location.lower():
-                return Station.objects.get(abbreviation='24TH')
-            if 'east dublin' in cleaned_location.lower():
-                return Station.objects.get(abbreviation='DUBL')
-            if 'pleasant hill' in cleaned_location.lower():
-                return Station.objects.get(abbreviation='PHIL')
-            if 'del norte' in cleaned_location.lower():
-                return Station.objects.get(abbreviation='DELN')
+                fixed_station = Station.objects.get(abbreviation='12TH')
+            elif '16th' in cleaned_location.lower():
+                fixed_station = Station.objects.get(abbreviation='16TH')
+            elif '19th' in cleaned_location.lower():
+                fixed_station = Station.objects.get(abbreviation='19TH')
+            elif '24th' in cleaned_location.lower():
+                fixed_station = Station.objects.get(abbreviation='24TH')
+            elif 'east dublin' in cleaned_location.lower():
+                fixed_station = Station.objects.get(abbreviation='DUBL')
+            elif 'pleasant hill' in cleaned_location.lower():
+                fixed_station = Station.objects.get(abbreviation='PHIL')
+            elif 'del norte' in cleaned_location.lower():
+                fixed_station = Station.objects.get(abbreviation='DELN')
+            return fixed_station
         return None
 
     @property
     def icon(self):
         lower_title = self.title.lower()
+        icon = None
         if ('auto' in lower_title or
                 'vehicle' in lower_title or 'car' in lower_title):
-            return 'car'
+            icon = 'car'
         if 'bicycle' in lower_title or 'bike' in lower_title:
-            return 'bicycle'
+            icon = 'bicycle'
         if ('intoxicat' in lower_title or
-            'alcohol' in lower_title or
+                'alcohol' in lower_title or
                 'open container' in lower_title):
-            return 'glass'
+            icon = 'glass'
         if 'warrant' in lower_title:
-            return 'user-secret'
+            icon = 'user-secret'
         if ('theft' in lower_title or
-            'robbery' in lower_title or
+                'robbery' in lower_title or
                 'burglary' in lower_title):
-            return 'money'
+            icon = 'money'
         if 'person' in lower_title:
-            return 'user-secret'
+            icon = 'user-secret'
         if ('violation' in lower_title or
-            'obstruct' in lower_title or
+                'obstruct' in lower_title or
                 'prohibit' in lower_title):
-            return 'ban'
+            icon = 'ban'
         if 'weapon' in lower_title:
-            return 'cutlery'
+            icon = 'cutlery'
         if 'robbery' in lower_title:
-            return 'bank'
+            icon = 'bank'
         if 'exposure' in lower_title:
-            return 'user-secret'
+            icon = 'user-secret'
         if 'agency' in lower_title or 'assist' in lower_title:
-            return 'shield'
+            icon = 'shield'
         if 'narcotics' in lower_title:
-            return 'medkit'
+            icon = 'medkit'
+        return icon
+
+
+    @property
+    def hover_date(self):
+        rfc_5322_fmt = '%a, %d %b %Y %H:%M:%S %z'
+        tz = pytz.timezone('America/Los_Angeles')
+        incident_dt = self.incident_dt.astimezone(tz).strftime(rfc_5322_fmt)
+        published_at = self.published_at.astimezone(tz).strftime(rfc_5322_fmt)
+        updated_at = self.updated_at.astimezone(tz).strftime(rfc_5322_fmt)
+        if incident_dt != published_at:
+            if published_at != updated_at:
+                fmt_str = ("Incident occurred at: {}\n"
+                           "Incident was published at: {}\n"
+                           "Incident was updated at: {}")
+                return fmt_str.format(incident_dt, published_at, updated_at)
+            fmt_str = "Incident occurred at: {}\nIncident was published at: {}"
+            return fmt_str.format(incident_dt, published_at)
+        if published_at != updated_at:
+            fmt_str = ("Incident was published at: {}\n"
+                       "Incident was updated at: {}"
+                       "(occurance date not parsed)")
+            return fmt_str.format(published_at, updated_at)
+        failure = "Incident was published at {} (occurance date not parsed)"
+        return failure.format(published_at)
 
 
 @receiver(pre_save, sender=Incident)
-def fill_data(sender, instance, **kwargs):
+def fill_data(sender, instance, **kwargs):  # pylint: disable=unused-argument
     guessed_station = instance.station_best_guess
     if guessed_station is not None:
         instance.parsed_location = True
@@ -215,12 +244,12 @@ def fill_data(sender, instance, **kwargs):
 
 
 @receiver(post_save, sender=Incident)
-def tweet_incident(sender, instance, created=False, **kwargs):
-    if created:
-        try:
-            instance.tweet()
-        except Exception as e:
-            print 'Exception while tweeting incident: {}'.format(str(e))
+# pylint: disable=unused-argument
+def tweet_incident(sender, instance, **kwargs):
+    try:
+        instance.tweet()
+    except TwitterError as exc:
+        print 'Exception while tweeting incident: {}'.format(str(exc))
 
 
 class Comment(models.Model):
@@ -228,3 +257,6 @@ class Comment(models.Model):
     created_dt = models.DateTimeField(auto_now_add=True)
     incident = models.ForeignKey(Incident)
     text = models.TextField()
+
+    def __unicode__(self):
+        return self.created_dt

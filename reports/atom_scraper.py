@@ -112,7 +112,7 @@ def scrape(local=False, skip_existing=True,
                         incident_date = datetime.date(year, month, day)
                         incident_dt = TZ.localize(incident_dt)
                         parsed_time = True
-                    except:
+                    except BaseException:
                         _LOGGER.error('Error when parsing time on log: %s',
                                       bpd_id)
 

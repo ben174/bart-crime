@@ -36,6 +36,9 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='incident',
             name='station',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='reports.Station'),
+            field=models.ForeignKey(
+                blank=True, null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='reports.Station'),
         ),
     ]
