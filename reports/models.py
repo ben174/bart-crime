@@ -244,11 +244,12 @@ def fill_data(sender, instance, **kwargs):  # pylint: disable=unused-argument
 
 @receiver(post_save, sender=Incident)
 # pylint: disable=unused-argument
-def tweet_incident(sender, instance, **kwargs):
-    try:
-        instance.tweet()
-    except TwitterError as exc:
-        print 'Exception while tweeting incident: {}'.format(str(exc))
+def tweet_incident(sender, instance, created=False, **kwargs):
+    if created:
+        try:
+            instance.tweet()
+        except TwitterError as exc:
+            print 'Exception while tweeting incident: {}'.format(str(exc))
 
 
 class Comment(models.Model):
