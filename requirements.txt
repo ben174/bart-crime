@@ -12,7 +12,7 @@ django-taggit==0.22.1
 django-taggit-serializer==0.1.5
 django-taggit-labels==0.5.1
 git+https://github.com/fizista/django-taggit-templatetags2.git#egg=django-taggit-templatetags2
-djangorestframework==3.6.3
+djangorestframework==3.9.1
 feedparser==5.2.1
 future==0.16.0
 gunicorn==19.7.1
