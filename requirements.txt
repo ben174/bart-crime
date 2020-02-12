@@ -24,7 +24,7 @@ psutil==5.2.2
 psycopg2==2.7.3
 python-twitter==3.3
 pytz==2017.2
-requests==2.18.2
+requests==2.20.0
 requests-oauthlib==0.8.0
 scandir==1.5
 six==1.10.0
