@@ -41,12 +41,14 @@
       <p>{{ comment.text|urlize }}</p>
     </blockquote>
   </div>
-</div>{% endfor %}
+</div>
+{% endfor %}
 <form method="post">
   {% csrf_token %}
   <div class="form-group">
     <label for="comment">Add a comment</label>
     <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
   </div><button class="btn btn-primary" type="submit">Submit</button>
-</form>{% endblock %}
+</form>
 {% endcomment %}
+{% endblock %}
