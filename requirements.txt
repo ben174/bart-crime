@@ -4,7 +4,7 @@ chardet==3.0.4
 colorama==0.3.9
 decorator==4.1.1
 dj-database-url==0.4.2
-Django==1.11.29
+Django==2.2.24
 git+https://github.com/robbiet480/django-bootstrap-pagination@merged#egg=django-bootstrap-pagination
 django-classy-tags==0.8.0
 django-cors-headers==2.1.0
